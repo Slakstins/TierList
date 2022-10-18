@@ -61,7 +61,7 @@ def delBook():
     if (not bookAvailable(isbn)):
         print("book must first be checked in")
         return
-    books.delete_one({"ISBN": isbn})
+    client.command("DELETE VERTEX BOOK WHERE ISBN=%s" % (isbn))
     print("book deleted")
 
 def editBook():
@@ -79,11 +79,12 @@ def editBook():
                     for i in range(int(authCount)):
                         author = raw_input("input author: " + str(i + 1) + "\n")
                         authors.append(author)
-                    books.update_one({"ISBN": isbn}, {"$set": {"Authors": authors}})
+                    client.command("UPDATE BOOK WHERE ISBN=%s SET Authors=%s" % (isbn, authors))
                     break
                 else:
                     newVal = raw_input("what would you like to set the value as?\n")
                     books.update_one({"ISBN": isbn}, {"$set": {editField: newVal}})
+                    client.command("UPDATE BOOK WHERE ISBN=%s SET %s=%s" % (isbn, editField, newVal))
                     break
             else:
                 print("invalid field")
@@ -105,11 +106,12 @@ def searchBook():
         return
     booksArr = []
     booksArr = books.find({searchField: searchWith})
+    booksArr = client.command("SELECT FROM BOOK WHERE %s=%s" % (searchField, searchWith))
     for book in booksArr:
         print(book)
 
 def borrowerExists(username):
-    return borrowers.find_one({"Username": username}) is not None
+    return len(client.command("SELECT FROM BORROWER WHERE Username=%s" % (username)) > 0
 
 def addBorrower():
     username = ""
@@ -127,13 +129,16 @@ def addBorrower():
         "Books": [],
         "Name": name
         })
-    borrowers.insert_one(borrower)
+    client.command("CREATE VERTEX BORROWER CONTENT " + json.dumps(borrower))
     print("user added successfully")
 
+
+#TODO: TEST ME
 def delBorrower():
     #only let the borrower be deleted if all of their books are checked in
     username = raw_input("input the username to delete:\n")
-    result = borrowers.delete_one({"Username": username})
+    result = client.command("DELETE VERTEX BORROWER WHERE Username=%s" % (username))
+    #this line won't work
     count = result.deleted_count
     print(count)
     if (count > 0):
@@ -156,6 +161,7 @@ def editBorrower():
             break;
     newVal = raw_input("input the new value for " + fieldToEdit + "\n")
     borrowers.update_one({"Username": username}, {"$set" : {fieldToEdit: newVal}})
+    client.command("UPDATE VERTEX BORROWER WHERE Username=%s SET %s=%s" % (username, fieldToEdit, newVal))
     print("value set")
 
 def searchBorrower():
@@ -165,7 +171,7 @@ def searchBorrower():
         return
     searchVal = raw_input("what " + searchField + " value would you like to search with?\n")
     borrowersArr = []
-    borrowersArr = borrowers.find({searchField: searchVal})
+    borrowersArr = client.command("SELECT FROM BORROWER WHERE %s=%s" % (searchField, searchVal))
     for borrower in borrowersArr:
         print(borrower)
 
