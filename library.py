@@ -1,13 +1,11 @@
-import pymongo
-from pymongo import MongoClient
-client = MongoClient()
-db = client['library']
-books = db.books
-borrowers = db.borrowers
-
 import pyorient
+import json
 client = pyorient.OrientDB("localhost", 2424)
+session_id = client.connect("root", "ich3aeNg")
+print(session_id)
 
+client.db_open("Library", "admin", "admin")
+#client.command("CREATE VERTEX Book CONTENT {'Title': 1984, PageCount: '20'}")
 
 
 
@@ -26,21 +24,23 @@ CHECKIN_BOOK = "checkin book"
 CHECK_BORROWER_BOOK_COUNT = "check borrower book count"
 REMOVE_BOOK_ATTRIBUTE = "remove book attribute"
 
+
 def bookExists(isbn):
-    return books.find_one({"ISBN": isbn}) is not None
+    res = client.command("SELECT FROM BOOK WHERE ISBN=%s" % (isbn))
+    return len(res) > 0
 
 def addBook():
-    isbn = input("input isbn:\n")
+    isbn = raw_input("input isbn:\n")
     if (bookExists(isbn)):
         print("book with that isbn already exists")
         return
     else:
-        title = input("input title: \n")
-        pageCount = input("input page count (integer):\n")
-        authorCount = input("how many authors (integer):\n")
+        title = raw_input("input title: \n")
+        pageCount = raw_input("input page count (integer):\n")
+        authorCount = raw_input("how many authors (integer):\n")
         authors = [];
         for i in range(int(authorCount)):
-            author = input("input author: " + str(i + 1) + "\n")
+            author = raw_input("input author: " + str(i + 1) + "\n")
             authors.append(author)
         document = ({
             'Title': title,
@@ -49,12 +49,12 @@ def addBook():
             'Authors' : authors,
             'CheckedOut' : False
             })
-        result = books.insert_one(document)
+        result = client.command("CREATE VERTEX BOOK CONTENT " + json.dumps(document))
         #print('added ' + '"' + title + '"' + "with id : " + str(result.inserted_id))
         print('document is : ' + str(document))
 
 def delBook():
-    isbn = input("input isbn:\n")
+    isbn = raw_input("input isbn:\n")
     if (not bookExists(isbn)):
         print("book not found")
         return
@@ -65,41 +65,41 @@ def delBook():
     print("book deleted")
 
 def editBook():
-    isbn = input("input isbn of book to edit:\n")
+    isbn = raw_input("input isbn of book to edit:\n")
     if (not bookExists(isbn)):
         print("no book with that isbn in catalog")
         return
     else:
         while(True):
-            editField = input("what field would you like to edit? Title, ISBN, Authors, PageCount\n")
+            editField = raw_input("what field would you like to edit? Title, ISBN, Authors, PageCount\n")
             if (editField == 'Title' or editField == 'ISBN' or editField == 'Authors' or editField == 'PageCount'):
                 if (editField == "Authors"):
-                    authCount = input("how many authors? (integer)")
+                    authCount = raw_input("how many authors? (integer)")
                     authors = []
                     for i in range(int(authCount)):
-                        author = input("input author: " + str(i + 1) + "\n")
+                        author = raw_input("input author: " + str(i + 1) + "\n")
                         authors.append(author)
                     books.update_one({"ISBN": isbn}, {"$set": {"Authors": authors}})
                     break
                 else:
-                    newVal = input("what would you like to set the value as?\n")
+                    newVal = raw_input("what would you like to set the value as?\n")
                     books.update_one({"ISBN": isbn}, {"$set": {editField: newVal}})
                     break
             else:
                 print("invalid field")
 
 def viewBooks():
-    sortBy = input("what would you like the books sorted by? (Title, PageCount, ISBN, Authors)\n")
+    sortBy = raw_input("what would you like the books sorted by? (Title, PageCount, ISBN, Authors)\n")
     booksArr = []
     if (sortBy == "Title" or sortBy == "PageCount" or sortBy == "ISBN" or sortBy == "Authors"):
-        booksArr = books.find().sort(sortBy)
+        booksArr = client.command("SELECT FROM BOOK ORDER BY %s ASC" % (sortBy))
     print("books sorted by " + sortBy + ":")
     for book in booksArr:
         print(book)
 
 def searchBook():
-    searchField = input("what would you like to search by? (Title, ISBN, Authors)\n")
-    searchWith = input("enter a " + searchField + ":\n")
+    searchField = raw_input("what would you like to search by? (Title, ISBN, Authors)\n")
+    searchWith = raw_input("enter a " + searchField + ":\n")
     if (searchField != 'Title' and searchField != 'ISBN' and searchField != 'Authors'):
         print('search field not supported')
         return
@@ -114,13 +114,13 @@ def borrowerExists(username):
 def addBorrower():
     username = ""
     while(True):
-        username = input("enter borrower username:\n")
+        username = raw_input("enter borrower username:\n")
         if (borrowerExists(username)):
             print("username already in use. Select a different one\n")
         else:
             break
-    name = input("enter borrower name:\n")
-    phone = input("enter borrower phone number:\n")
+    name = raw_input("enter borrower name:\n")
+    phone = raw_input("enter borrower phone number:\n")
     borrower = ({
         "Username": username,
         "Phone": phone,
@@ -132,7 +132,7 @@ def addBorrower():
 
 def delBorrower():
     #only let the borrower be deleted if all of their books are checked in
-    username = input("input the username to delete:\n")
+    username = raw_input("input the username to delete:\n")
     result = borrowers.delete_one({"Username": username})
     count = result.deleted_count
     print(count)
@@ -143,27 +143,27 @@ def delBorrower():
 
 
 def editBorrower():
-    username = input("input the username of the user to edit:\n")
+    username = raw_input("input the username of the user to edit:\n")
     if (not borrowerExists(username)):
         print("user not found")
         return
     fieldToEdit = ""
     while(True):
-        fieldToEdit = input("enter the field to edit (Username, Phone, or Name):\n")
+        fieldToEdit = raw_input("enter the field to edit (Username, Phone, or Name):\n")
         if (fieldToEdit != "Phone" and fieldToEdit != "Name" and fieldToEdit != "Username"):
             print("invalid field")
         else:
             break;
-    newVal = input("input the new value for " + fieldToEdit + "\n")
+    newVal = raw_input("input the new value for " + fieldToEdit + "\n")
     borrowers.update_one({"Username": username}, {"$set" : {fieldToEdit: newVal}})
     print("value set")
 
 def searchBorrower():
-    searchField = input("what field would you like to search on (Name or Username)?\n")
+    searchField = raw_input("what field would you like to search on (Name or Username)?\n")
     if (searchField != "Name" and searchField != "Username"):
         print("invalid field name")
         return
-    searchVal = input("what " + searchField + " value would you like to search with?\n")
+    searchVal = raw_input("what " + searchField + " value would you like to search with?\n")
     borrowersArr = []
     borrowersArr = borrowers.find({searchField: searchVal})
     for borrower in borrowersArr:
@@ -173,11 +173,11 @@ def bookAvailable(isbn):
     return books.count_documents({"ISBN": isbn, "CheckedOut": False}) == 1
 
 def checkoutBook():
-    username = input("input username:\n")
+    username = raw_input("input username:\n")
     if (not borrowerExists(username)):
         print("user not found")
         return
-    isbn = input("input book isbn:\n")
+    isbn = raw_input("input book isbn:\n")
     if (not bookExists(isbn)):
         print("book not found")
         return
@@ -190,12 +190,12 @@ def checkoutBook():
     
 
 def checkinBook():
-    username = input("input username:\n")
+    username = raw_input("input username:\n")
     if (not borrowerExists(username)):
         print("user not found")
         return
     #make sure to check that the borrower has the book checked out
-    isbn = input("input book isbn:\n")
+    isbn = raw_input("input book isbn:\n")
     if (not bookExists(isbn)):
         print("book not found")
         return
@@ -204,7 +204,7 @@ def checkinBook():
     print("checkin successful")
     
 def checkBookCount():
-    username = input("select user to view book count of\n")
+    username = raw_input("select user to view book count of\n")
     if (not borrowerExists(username)):
         print("user not found")
         return
@@ -212,11 +212,11 @@ def checkBookCount():
     print(booksOut["count"])
 
 def removeBookAttribute():
-    isbn = input("input ISBN\n")
+    isbn = raw_input("input ISBN\n")
     if (not bookExists(isbn)):
         print("book not found")
         return
-    field = input("select attribute to remove (Title, PageCount, Authors\n")
+    field = raw_input("select attribute to remove (Title, PageCount, Authors\n")
     if (not (field == "Title" or field == "PageCount" or field == "Authors")):
         print("invalid field\n")
         return
@@ -242,7 +242,7 @@ def listCommands():
 
 listCommands()
 while True:
-    cmd = input(">>> ")
+    cmd = raw_input(">>> ")
     if (cmd == "help"):
         listCommands()
     elif (cmd == ADD_BOOK):
