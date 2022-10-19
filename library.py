@@ -26,7 +26,7 @@ REMOVE_BOOK_ATTRIBUTE = "remove book attribute"
 
 
 def bookExists(isbn):
-    res = client.command("SELECT FROM BOOK WHERE ISBN=%s" % (isbn))
+    res = client.command("SELECT FROM BOOK WHERE ISBN='%s'" % (isbn))
     return len(res) > 0
 
 def addBook():
@@ -47,7 +47,6 @@ def addBook():
             'ISBN' : isbn,
             'PageCount' : pageCount,
             'Authors' : authors,
-            'CheckedOut' : False
             })
         result = client.command("CREATE VERTEX BOOK CONTENT " + json.dumps(document))
         #print('added ' + '"' + title + '"' + "with id : " + str(result.inserted_id))
@@ -61,7 +60,7 @@ def delBook():
     if (not bookAvailable(isbn)):
         print("book must first be checked in")
         return
-    client.command("DELETE VERTEX BOOK WHERE ISBN=%s" % (isbn))
+    client.command("DELETE VERTEX BOOK WHERE ISBN='%s'" % (isbn))
     print("book deleted")
 
 def editBook():
@@ -79,12 +78,11 @@ def editBook():
                     for i in range(int(authCount)):
                         author = raw_input("input author: " + str(i + 1) + "\n")
                         authors.append(author)
-                    client.command("UPDATE BOOK WHERE ISBN=%s SET Authors=%s" % (isbn, authors))
+                    client.command("UPDATE BOOK SET Authors=%s WHERE ISBN='%s'" % (authors, isbn))
                     break
                 else:
                     newVal = raw_input("what would you like to set the value as?\n")
-                    books.update_one({"ISBN": isbn}, {"$set": {editField: newVal}})
-                    client.command("UPDATE BOOK WHERE ISBN=%s SET %s=%s" % (isbn, editField, newVal))
+                    client.command("UPDATE BOOK SET %s='%s' WHERE ISBN='%s'" % (editField, newVal, isbn))
                     break
             else:
                 print("invalid field")
@@ -98,6 +96,7 @@ def viewBooks():
     for book in booksArr:
         print(book)
 
+#TODO Fix search by authors
 def searchBook():
     searchField = raw_input("what would you like to search by? (Title, ISBN, Authors)\n")
     searchWith = raw_input("enter a " + searchField + ":\n")
@@ -105,13 +104,12 @@ def searchBook():
         print('search field not supported')
         return
     booksArr = []
-    booksArr = books.find({searchField: searchWith})
-    booksArr = client.command("SELECT FROM BOOK WHERE %s=%s" % (searchField, searchWith))
+    booksArr = client.command("SELECT FROM BOOK WHERE %s='%s'" % (searchField, searchWith))
     for book in booksArr:
         print(book)
 
 def borrowerExists(username):
-    return len(client.command("SELECT FROM BORROWER WHERE Username=%s" % (username)) > 0
+    return len(client.command("SELECT FROM BORROWER WHERE Username='%s'" % (username))) > 0
 
 def addBorrower():
     username = ""
@@ -126,7 +124,6 @@ def addBorrower():
     borrower = ({
         "Username": username,
         "Phone": phone,
-        "Books": [],
         "Name": name
         })
     client.command("CREATE VERTEX BORROWER CONTENT " + json.dumps(borrower))
@@ -137,16 +134,17 @@ def addBorrower():
 def delBorrower():
     #only let the borrower be deleted if all of their books are checked in
     username = raw_input("input the username to delete:\n")
-    result = client.command("DELETE VERTEX BORROWER WHERE Username=%s" % (username))
-    #this line won't work
-    count = result.deleted_count
-    print(count)
-    if (count > 0):
-        print("user deleted")
-    else:
-        print("user not found")
+    if (not borrowerExists(username)):
+        print("borrower not found")
+        return
+    if (len(client.command("SELECT FROM BORROWER WHERE Username='%s' AND (out_ is NULL or out_.size() < 1)")) < 1):
+        print("borrower must first check in books")
+        return
+    client.command("DELETE VERTEX BORROWER WHERE Username='%s'" % (username))
+    print("user deleted")
 
 
+#TODO create separate cases for each attribute to add so that numbers are numbers and strings are strings
 def editBorrower():
     username = raw_input("input the username of the user to edit:\n")
     if (not borrowerExists(username)):
@@ -160,8 +158,7 @@ def editBorrower():
         else:
             break;
     newVal = raw_input("input the new value for " + fieldToEdit + "\n")
-    borrowers.update_one({"Username": username}, {"$set" : {fieldToEdit: newVal}})
-    client.command("UPDATE VERTEX BORROWER WHERE Username=%s SET %s=%s" % (username, fieldToEdit, newVal))
+    client.command("UPDATE VERTEX BORROWER SET %s='%s' WHERE Username='%s'" % (username, fieldToEdit, newVal))
     print("value set")
 
 def searchBorrower():
@@ -171,12 +168,12 @@ def searchBorrower():
         return
     searchVal = raw_input("what " + searchField + " value would you like to search with?\n")
     borrowersArr = []
-    borrowersArr = client.command("SELECT FROM BORROWER WHERE %s=%s" % (searchField, searchVal))
+    borrowersArr = client.command("SELECT FROM BORROWER WHERE %s='%s'" % (searchField, searchVal))
     for borrower in borrowersArr:
         print(borrower)
 
 def bookAvailable(isbn):
-    return books.count_documents({"ISBN": isbn, "CheckedOut": False}) == 1
+    return len(client.command("SELECT FROM BOOK WHERE ISBN='%s' AND (in_.size() < 1 OR in_.size() IS NULL)" % (isbn))) > 0
 
 def checkoutBook():
     username = raw_input("input username:\n")
@@ -190,44 +187,28 @@ def checkoutBook():
     if (not bookAvailable(isbn)):
         print("that book is not in stock")
         return
-    borrowers.update_one({"Username": username}, {"$push": {"Books": isbn}})
-    books.update_one({"ISBN": isbn}, {"$set": {"CheckedOut": True}})
+    client.command("CREATE EDGE FROM (SELECT FROM BORROWER WHERE Username='%s') TO (SELECT FROM BOOK WHERE ISBN='%s')" % (username, isbn))
     print("checkout successful")
     
 
+#anyone can check in any book
 def checkinBook():
-    username = raw_input("input username:\n")
-    if (not borrowerExists(username)):
-        print("user not found")
-        return
-    #make sure to check that the borrower has the book checked out
     isbn = raw_input("input book isbn:\n")
     if (not bookExists(isbn)):
         print("book not found")
         return
-    books.update_one({"ISBN": isbn}, {"$set": {"CheckedOut": False}})
-    borrowers.update_one({"Username": username}, {"$pull": {"Books": isbn}})
+    client.command("DELETE EDGE TO (SELECT FROM BOOK WHERE ISBN='%s')" % (isbn))
     print("checkin successful")
     
+#TODO: Fix me!
 def checkBookCount():
     username = raw_input("select user to view book count of\n")
     if (not borrowerExists(username)):
         print("user not found")
         return
-    booksOut = borrowers.aggregate([{"$project": {"count": {"$size": "$Books"}}}]).next()
-    print(booksOut["count"])
+    booksOut = client.command("SELECT out_.size FROM Borrower WHERE Username='%s'" % (username))
+    print(booksOut[0])
 
-def removeBookAttribute():
-    isbn = raw_input("input ISBN\n")
-    if (not bookExists(isbn)):
-        print("book not found")
-        return
-    field = raw_input("select attribute to remove (Title, PageCount, Authors\n")
-    if (not (field == "Title" or field == "PageCount" or field == "Authors")):
-        print("invalid field\n")
-        return
-    books.update_one({"ISBN": isbn}, {"$unset": {field: ""}})
-    print("attribute removed\n")
     
 
 def listCommands():
