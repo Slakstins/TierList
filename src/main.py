@@ -74,7 +74,7 @@ def accountPage(window):
         156.0,
         118.0,
         anchor="nw",
-        text="Username:",
+        text="Username:" + getUsername(),
         fill="#000000",
         font=("Inter", 16 * -1)
     )
@@ -135,23 +135,6 @@ def registerPage(window):
         fill="#5D5FEF",
         outline="")
 
-    button_image_1 = PhotoImage(
-        file=relative_to_assets("register_button_1.png"))
-    button_1 = Button(
-        image=button_image_1,
-        borderwidth=0,
-        highlightthickness=0,
-        # command=lambda: print("button_1 clicked"),
-        command=lambda: accountPage(window),
-        relief="flat"
-    )
-    button_1.place(
-        x=229.0,
-        y=188.0,
-        width=127.0,
-        height=29.0
-    )
-
     entry_image_1 = PhotoImage(
         file=relative_to_assets("register_entry_1.png"))
     entry_bg_1 = canvas.create_image(
@@ -197,6 +180,23 @@ def registerPage(window):
         y=68.0,
         width=229.0,
         height=32.0
+    )
+
+    button_image_1 = PhotoImage(
+    file=relative_to_assets("register_button_1.png"))
+    button_1 = Button(
+        image=button_image_1,
+        borderwidth=0,
+        highlightthickness=0,
+        # command=lambda: print("button_1 clicked"),
+        command= lambda: registerUser(entry_2.get("1.0","end-1c"), entry_1.get("1.0","end-1c")),
+        relief="flat"
+    )
+    button_1.place(
+        x=229.0,
+        y=188.0,
+        width=127.0,
+        height=29.0
     )
 
     canvas.create_text(
@@ -254,7 +254,7 @@ def loginPage(window):
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_1 clicked"),
+        command=lambda: registerPage(window),
         relief="flat"
     )
     button_1.place(
@@ -262,22 +262,6 @@ def loginPage(window):
         y=239.0,
         width=127.0,
         height=32.0
-    )
-
-    button_image_2 = PhotoImage(
-        file=relative_to_assets("login_button_2.png"))
-    button_2 = Button(
-        image=button_image_2,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: print("button_2 clicked"),
-        relief="flat"
-    )
-    button_2.place(
-        x=229.0,
-        y=188.0,
-        width=127.0,
-        height=29.0
     )
 
     entry_image_1 = PhotoImage(
@@ -327,6 +311,22 @@ def loginPage(window):
         height=32.0
     )
 
+    button_image_2 = PhotoImage(
+    file=relative_to_assets("login_button_2.png"))
+    button_2 = Button(
+        image=button_image_2,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: loginUser(entry_2.get("1.0","end-1c"), entry_1.get("1.0","end-1c")),
+        relief="flat"
+    )
+    button_2.place(
+        x=229.0,
+        y=188.0,
+        width=127.0,
+        height=29.0
+    )
+
     canvas.create_text(
         178.0,
         55.0,
@@ -347,7 +347,7 @@ def loginPage(window):
     window.resizable(False, False)
     window.mainloop()
 
-def browsePage():
+def browsePage(window):
     canvas = Canvas(
     window,
     bg = "#FFFFFF",
@@ -415,7 +415,7 @@ def browsePage():
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_1 clicked"),
+        command=lambda: accountPage(window),
         relief="flat"
     )
     button_1.place(
@@ -459,13 +459,38 @@ def browsePage():
     window.resizable(False, False)
     window.mainloop()
 
-def testConnections():
-    global mClient, oClient, rClient
+def registerUser(username, password):
+    #TODO: fix 
+    global currentUser
+    print("username" + username)
+    print("password" + password)
+    document = {
+        "Username": username,
+        "Password": password,
+    }
+    userDB.insert_one(document)
+    print("Registered user!")
+    currentUser = username
+    browsePage(window)
+    return
 
+def getUsername():
+    return userDB.find_one({"Username": currentUser})["Username"]
+
+def loginUser(username, password):
+    #TODO: fix 
+    global currentUser
+    currentUser = userDB.find_one({"Username": username})["Username"]
+    browsePage(window)
+
+def testConnections():
+    global mClient, oClient, rClient, userDB
     #test mongo
     try:
         mClient = MongoClient("433-11.csse.rose-hulman.edu", 40000)
         print("Connected to Mongo Client")
+        dbname = mClient['Library']
+        userDB = dbname["Users"]
         #print(mclient.server_info(mon))
     except:
         print("Failed to connect to Mongo Client")
@@ -491,5 +516,5 @@ def testConnections():
     return True
 
 testConnections()
-registerPage(window)
+loginPage(window)
 
