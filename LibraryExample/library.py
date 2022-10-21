@@ -12,8 +12,10 @@ client.db_open("Library", "admin", "admin")
 print("welcome to the library!")
 ADD_BOOK = "add book"
 VIEW_BOOKS = "view books"
+VIEW_BORROWER_BOOKS = "view borrower books"
 DEL_BOOK = "del book"
 EDIT_BOOK = "edit book"
+VIEW_BORROWERS = "view borrowers"
 ADD_BORROWER = "add borrower"
 DEL_BORROWER = "del borrower"
 EDIT_BORROWER = "edit borrower"
@@ -22,7 +24,6 @@ SEARCH_BOOK = "search book"
 CHECKOUT_BOOK = "checkout book"
 CHECKIN_BOOK = "checkin book"
 CHECK_BORROWER_BOOK_COUNT = "check borrower book count"
-REMOVE_BOOK_ATTRIBUTE = "remove book attribute"
 
 
 def bookExists(isbn):
@@ -30,17 +31,17 @@ def bookExists(isbn):
     return len(res) > 0
 
 def addBook():
-    isbn = raw_input("input isbn:\n")
+    isbn = input("input isbn:\n")
     if (bookExists(isbn)):
         print("book with that isbn already exists")
         return
     else:
-        title = raw_input("input title: \n")
-        pageCount = raw_input("input page count (integer):\n")
-        authorCount = raw_input("how many authors (integer):\n")
+        title = input("input title: \n")
+        pageCount = input("input page count (integer):\n")
+        authorCount = input("how many authors (integer):\n")
         authors = [];
         for i in range(int(authorCount)):
-            author = raw_input("input author: " + str(i + 1) + "\n")
+            author = input("input author: " + str(i + 1) + "\n")
             authors.append(author)
         document = ({
             'Title': title,
@@ -53,7 +54,7 @@ def addBook():
         print('document is : ' + str(document))
 
 def delBook():
-    isbn = raw_input("input isbn:\n")
+    isbn = input("input isbn:\n")
     if (not bookExists(isbn)):
         print("book not found")
         return
@@ -64,42 +65,58 @@ def delBook():
     print("book deleted")
 
 def editBook():
-    isbn = raw_input("input isbn of book to edit:\n")
+    isbn = input("input isbn of book to edit:\n")
     if (not bookExists(isbn)):
         print("no book with that isbn in catalog")
         return
     else:
         while(True):
-            editField = raw_input("what field would you like to edit? Title, ISBN, Authors, PageCount\n")
+            editField = input("what field would you like to edit? Title, ISBN, Authors, PageCount\n")
             if (editField == 'Title' or editField == 'ISBN' or editField == 'Authors' or editField == 'PageCount'):
                 if (editField == "Authors"):
-                    authCount = raw_input("how many authors? (integer)")
+                    authCount = input("how many authors? (integer)")
                     authors = []
                     for i in range(int(authCount)):
-                        author = raw_input("input author: " + str(i + 1) + "\n")
+                        author = input("input author: " + str(i + 1) + "\n")
                         authors.append(author)
                     client.command("UPDATE BOOK SET Authors=%s WHERE ISBN='%s'" % (authors, isbn))
                     break
                 else:
-                    newVal = raw_input("what would you like to set the value as?\n")
+                    newVal = input("what would you like to set the value as?\n")
                     client.command("UPDATE BOOK SET %s='%s' WHERE ISBN='%s'" % (editField, newVal, isbn))
                     break
             else:
                 print("invalid field")
 
 def viewBooks():
-    sortBy = raw_input("what would you like the books sorted by? (Title, PageCount, ISBN, Authors)\n")
+    sortBy = input("what would you like the books sorted by? (Title, PageCount, ISBN, Authors)\n")
     booksArr = []
     if (sortBy == "Title" or sortBy == "PageCount" or sortBy == "ISBN" or sortBy == "Authors"):
         booksArr = client.command("SELECT FROM BOOK ORDER BY %s ASC" % (sortBy))
     print("books sorted by " + sortBy + ":")
-    for book in booksArr:
+    printBooks(booksArr)
+
+def viewBorrowerBooks():
+    username = input("input username of borrower:\n")
+    books = client.command("SELECT FROM (TRAVERSE * FROM (SELECT FROM BORROWER WHERE Username='%s')) WHERE @class = 'Book'" % (username))
+    printBooks(books)
+
+def printBooks(books):
+    for book in books:
         print(book)
+
+def printBorrowers(borrowers):
+    for borrower in borrowers:
+        print(borrower)
+
+def viewBorrowers():
+    borrowers = client.command("SELECT FROM BORROWER")
+    printBorrowers(borrowers)
 
 #TODO Fix search by authors
 def searchBook():
-    searchField = raw_input("what would you like to search by? (Title, ISBN, Authors)\n")
-    searchWith = raw_input("enter a " + searchField + ":\n")
+    searchField = input("what would you like to search by? (Title, ISBN, Authors)\n")
+    searchWith = input("enter a " + searchField + ":\n")
     if (searchField != 'Title' and searchField != 'ISBN' and searchField != 'Authors'):
         print('search field not supported')
         return
@@ -114,13 +131,13 @@ def borrowerExists(username):
 def addBorrower():
     username = ""
     while(True):
-        username = raw_input("enter borrower username:\n")
+        username = input("enter borrower username:\n")
         if (borrowerExists(username)):
             print("username already in use. Select a different one\n")
         else:
             break
-    name = raw_input("enter borrower name:\n")
-    phone = raw_input("enter borrower phone number:\n")
+    name = input("enter borrower name:\n")
+    phone = input("enter borrower phone number:\n")
     borrower = ({
         "Username": username,
         "Phone": phone,
@@ -133,7 +150,7 @@ def addBorrower():
 #TODO: TEST ME
 def delBorrower():
     #only let the borrower be deleted if all of their books are checked in
-    username = raw_input("input the username to delete:\n")
+    username = input("input the username to delete:\n")
     if (not borrowerExists(username)):
         print("borrower not found")
         return
@@ -146,27 +163,27 @@ def delBorrower():
 
 #TODO create separate cases for each attribute to add so that numbers are numbers and strings are strings
 def editBorrower():
-    username = raw_input("input the username of the user to edit:\n")
+    username = input("input the username of the user to edit:\n")
     if (not borrowerExists(username)):
         print("user not found")
         return
     fieldToEdit = ""
     while(True):
-        fieldToEdit = raw_input("enter the field to edit (Username, Phone, or Name):\n")
+        fieldToEdit = input("enter the field to edit (Username, Phone, or Name):\n")
         if (fieldToEdit != "Phone" and fieldToEdit != "Name" and fieldToEdit != "Username"):
             print("invalid field")
         else:
             break;
-    newVal = raw_input("input the new value for " + fieldToEdit + "\n")
+    newVal = input("input the new value for " + fieldToEdit + "\n")
     client.command("UPDATE VERTEX BORROWER SET %s='%s' WHERE Username='%s'" % (username, fieldToEdit, newVal))
     print("value set")
 
 def searchBorrower():
-    searchField = raw_input("what field would you like to search on (Name or Username)?\n")
+    searchField = input("what field would you like to search on (Name or Username)?\n")
     if (searchField != "Name" and searchField != "Username"):
         print("invalid field name")
         return
-    searchVal = raw_input("what " + searchField + " value would you like to search with?\n")
+    searchVal = input("what " + searchField + " value would you like to search with?\n")
     borrowersArr = []
     borrowersArr = client.command("SELECT FROM BORROWER WHERE %s='%s'" % (searchField, searchVal))
     for borrower in borrowersArr:
@@ -176,11 +193,11 @@ def bookAvailable(isbn):
     return len(client.command("SELECT FROM BOOK WHERE ISBN='%s' AND (in_.size() < 1 OR in_.size() IS NULL)" % (isbn))) > 0
 
 def checkoutBook():
-    username = raw_input("input username:\n")
+    username = input("input username:\n")
     if (not borrowerExists(username)):
         print("user not found")
         return
-    isbn = raw_input("input book isbn:\n")
+    isbn = input("input book isbn:\n")
     if (not bookExists(isbn)):
         print("book not found")
         return
@@ -193,7 +210,7 @@ def checkoutBook():
 
 #anyone can check in any book
 def checkinBook():
-    isbn = raw_input("input book isbn:\n")
+    isbn = input("input book isbn:\n")
     if (not bookExists(isbn)):
         print("book not found")
         return
@@ -202,20 +219,23 @@ def checkinBook():
     
 #TODO: Fix me!
 def checkBookCount():
-    username = raw_input("select user to view book count of\n")
+    username = input("select user to view book count of\n")
     if (not borrowerExists(username)):
         print("user not found")
         return
-    booksOut = client.command("SELECT out_.size FROM Borrower WHERE Username='%s'" % (username))
+    booksOut = client.command("SELECT out_.size() FROM Borrower WHERE Username='%s'" % (username))
     print(booksOut[0])
 
     
 
 def listCommands():
     print("Enter any of the following commands:")
+    print(VIEW_BOOKS)
+    print(VIEW_BORROWER_BOOKS)
     print(ADD_BOOK)
     print(DEL_BOOK)
     print(EDIT_BOOK)
+    print(VIEW_BORROWERS)
     print(ADD_BORROWER)
     print(DEL_BORROWER)
     print(EDIT_BORROWER)
@@ -224,12 +244,10 @@ def listCommands():
     print(CHECKOUT_BOOK)
     print(CHECKIN_BOOK)
     print(CHECK_BORROWER_BOOK_COUNT)
-    print(VIEW_BOOKS)
-    print(REMOVE_BOOK_ATTRIBUTE)
 
 listCommands()
 while True:
-    cmd = raw_input(">>> ")
+    cmd = input(">>> ")
     if (cmd == "help"):
         listCommands()
     elif (cmd == ADD_BOOK):
@@ -256,8 +274,12 @@ while True:
         checkinBook()
     elif (cmd == CHECK_BORROWER_BOOK_COUNT):
         checkBookCount()
-    elif (cmd == REMOVE_BOOK_ATTRIBUTE):
+    elif (cmd == VIEW_BOOKS):
         removeBookAttribute()
+    elif (cmd == VIEW_BORROWERS):
+        viewBorrowers()
+    elif (cmd == VIEW_BORROWER_BOOKS):
+        viewBorrowerBooks()
     elif (cmd == 'q'):
         break
     else:
