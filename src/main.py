@@ -65,7 +65,7 @@ def accountPage(window):
         156.0,
         176.0,
         anchor="nw",
-        text="Password:",
+        text="Password: Hidden",
         fill="#000000",
         font=("Inter", 16 * -1)
     )
@@ -74,7 +74,7 @@ def accountPage(window):
         156.0,
         118.0,
         anchor="nw",
-        text="Username:" + getUsername(),
+        text="Username: " + getUsername(),
         fill="#000000",
         font=("Inter", 16 * -1)
     )
@@ -462,14 +462,11 @@ def browsePage(window):
 def registerUser(username, password):
     #TODO: fix 
     global currentUser
-    print("username" + username)
-    print("password" + password)
     document = {
         "Username": username,
         "Password": password,
     }
     userDB.insert_one(document)
-    print("Registered user!")
     currentUser = username
     browsePage(window)
     return
@@ -480,8 +477,13 @@ def getUsername():
 def loginUser(username, password):
     #TODO: fix 
     global currentUser
-    currentUser = userDB.find_one({"Username": username})["Username"]
-    browsePage(window)
+    user = userDB.find_one({"Username": username, "Password": password})
+    if(user):
+        currentUser = user["Username"]
+        browsePage(window)
+    else:
+        print("login invalid")
+
 
 def testConnections():
     global mClient, oClient, rClient, userDB
