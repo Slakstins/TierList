@@ -1,34 +1,28 @@
 
 
 import pyorient
+import constants
+import instructions
 
-oclient = pyorient.OrientDB(ORIENT_VM,ORIENT_PORT)
-oclient.connect(ORIENT_USERNAME,ORIENT_PASSWORD)
 
-oclient.db_open(ORIENT_DB_NAME, ORIENT_DB_USERNAME, ORIENT_DB_PASSWORD)
-
+#if a db connection fails here, it should throw an exception
 def orientCreateUser(inst):
-    print("orient creating user")
-    return True
+    instructions.oclient.command("SELECT * FROM E")
+    print("orient created user")
 
 def orientDeleteUser(inst):
-    print("orient deleting user")
-    return True
+    print("orient deleted user")
 
 def orientUpdateUser(inst):
-    print("orient updating user")
-    return True
+    print("orient updated user")
 
 def orientCreateTierList(inst):
-    print("orient create tier list")
-    return True
+    print("orient created tier list")
 
 def orientUpdateTierList(inst):
-    print("orient update tier list")
-    return True
+    print("orient updated tier list")
 
 def orientDeleteTierList(inst):
-    print("orient delete tier list")
-    return True
+    print("orient deleted tier list")
 
 

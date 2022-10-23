@@ -1,9 +1,9 @@
 
 import pymongo
 from pymongo import MongoClient
+import constants
 
 
-mclient = MongoClient(MONGO_VM, MONGO_PORT)
 
 def mongoCreateUser(inst):
     print("mongo creating user")
