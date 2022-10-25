@@ -1,7 +1,7 @@
 from tkinter import Button, Canvas, PhotoImage
 
 from main import relative_to_assets
-from pages.registerPage import registerPage
+from pages.createUserPage.registerPageLegacy import registerPage
 from requests import getUsername
 
 

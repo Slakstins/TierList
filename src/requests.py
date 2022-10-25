@@ -43,7 +43,7 @@ def registerUser(window, username, password):
     }
     userDB.insert_one(document)
     currentUser = username
-    from pages.browsePage import browsePage
+    from pages.browsePage.browsePageLegacy import browsePage
     browsePage(window)
     return
 
@@ -56,7 +56,7 @@ def loginUser(window, username, password):
     user = userDB.find_one({"Username": username, "Password": password})
     if(user):
         currentUser = user["Username"]
-        from pages.browsePage import browsePage
+        from pages.browsePage.browsePageLegacy import browsePage
         browsePage(window)
     else:
         print("login invalid")
