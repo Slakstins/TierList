@@ -10,7 +10,7 @@ ASSETS_PATH = OUTPUT_PATH / Path("./assets")
         
 def main():
     testConnections()
-    from pages.loginPage.loginPageLegacy import loginPage
+    from pages.loginPage.loginPage import loginPage
     global window
     window = tkWindow()
     window.start()

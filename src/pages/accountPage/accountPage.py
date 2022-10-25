@@ -125,5 +125,21 @@ def accountPage(window):
         fill="#000000",
         font=("Inter", 24 * -1)
     )
+
+    button_image_5 = PhotoImage(
+        file=relative_to_assets("button_5.png"))
+    button_5 = Button(
+        image=button_image_5,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: print("button_5 clicked"),
+        relief="flat"
+    )
+    button_5.place(
+        x=15.0,
+        y=6.0,
+        width=59.0,
+        height=20.0
+    )
     window.resizable(False, False)
     window.mainloop()
