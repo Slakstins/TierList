@@ -6,7 +6,7 @@ MONGO_VM = "433-11.csse.rose-hulman.edu"
 MONGO_PORT = 40000
 
 #redis constants:
-REDIS_VM = "433-10.csse.rose-hulman.edu"
+REDIS_VM = "localhost"
 REDIS_PORT = 6379
 ORIENT_KEY = "orient"
 MONGO_KEY = "mongo"
@@ -21,7 +21,7 @@ ORIENT_DB_USERNAME = "admin"
 ORIENT_DB_PASSWORD = "admin"
 
 #instruction constants
-CREATE_ACCOUNT = "createUser"
+CREATE_USER = "createUser"
 DELETE_USER = "deleteUser"
 UPDATE_USER = "updateUser"
 CREATE_TIERLIST = "createTierList"
