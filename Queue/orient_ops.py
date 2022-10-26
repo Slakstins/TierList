@@ -7,7 +7,9 @@ import instructions
 
 #if a db connection fails here, it should throw an exception
 def orientCreateUser(inst):
-    instructions.oclient.command("SELECT * FROM E")
+    res = instructions.oclient.command("SELECT * FROM E")
+    print(res)
+
     print("orient created user")
 
 def orientDeleteUser(inst):
