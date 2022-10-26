@@ -154,7 +154,7 @@ def delBorrower():
     if (not borrowerExists(username)):
         print("borrower not found")
         return
-    if (len(client.command("SELECT FROM BORROWER WHERE Username='%s' AND (out_ is NULL or out_.size() < 1)")) < 1):
+    if (len(client.command("SELECT FROM BORROWER WHERE Username='%s' AND (out_ is NULL or out_.size() < 1)" % (username))) < 1):
         print("borrower must first check in books")
         return
     client.command("DELETE VERTEX BORROWER WHERE Username='%s'" % (username))
@@ -175,7 +175,7 @@ def editBorrower():
         else:
             break;
     newVal = input("input the new value for " + fieldToEdit + "\n")
-    client.command("UPDATE VERTEX BORROWER SET %s='%s' WHERE Username='%s'" % (username, fieldToEdit, newVal))
+    client.command("UPDATE BORROWER SET %s='%s' WHERE Username='%s'" % (fieldToEdit, newVal, username))
     print("value set")
 
 def searchBorrower():
@@ -214,7 +214,10 @@ def checkinBook():
     if (not bookExists(isbn)):
         print("book not found")
         return
-    client.command("DELETE EDGE TO (SELECT FROM BOOK WHERE ISBN='%s')" % (isbn))
+    if (bookAvailable(isbn)):
+        print("book not checked out")
+        return
+    client.command("DELETE EDGE E WHERE @RID IN (SELECT in_ FROM BOOK WHERE ISBN='%s')" % (isbn))
     print("checkin successful")
     
 #TODO: Fix me!
