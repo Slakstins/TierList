@@ -5,6 +5,7 @@ import constants
 import pyorient
 import pymongo
 from pymongo import MongoClient
+import schema_check
 
 mongoConnected = False
 orientConnected = False
@@ -45,43 +46,43 @@ def runInstruction(jsonInst, mongoOrOrient):
         return False
     inst = jsonInst['instruction']
     success = False
-    try:
-        if (inst == constants.CREATE_USER):
-            if (mongoOrOrient == constants.ORIENT_KEY):
-                orient_ops.orientCreateUser(inst)
-            else:
-                mongo_ops.mongoCreateUser(inst)
-        elif (inst == constants.DELETE_USER):
-            if (mongoOrOrient == constants.ORIENT_KEY):
-                orient_ops.orientDeleteUser(inst)
-            else:
-                mongo_ops.mongoDeleteUser(inst)
-        elif (inst == constants.UPDATE_USER):
-            if (mongoOrOrient == constants.ORIENT_KEY):
-                orient_ops.orientUpdateUser(inst)
-            else:
-                mongo_ops.mongoUpdateUser(inst)
-        elif (inst == constants.CREATE_TIERLIST):
-            if (mongoOrOrient == constants.ORIENT_KEY):
-                orient_ops.orientCreateTierList(inst)
-            else:
-                mongo_ops.mongoCreateTierList(inst)
-        elif (inst == constants.UPDATE_TIERLIST):
-            if (mongoOrOrient == constants.ORIENT_KEY):
-                orient_ops.orientUpdateTierList(inst)
-            else:
-                mongo_ops.mongoUpdateTierList(inst)
-        elif (inst == constants.DELETE_TIERLIST):
-            if (mongoOrOrient == constants.ORIENT_KEY):
-                orient_ops.orientDeleteTierList(inst)
-            else:
-                mongo_ops.mongoDeleteTierList(inst)
+    #try:
+    if (inst == constants.CREATE_USER and schema_check.createUser(jsonInst)):
+        if (mongoOrOrient == constants.ORIENT_KEY):
+            orient_ops.orientCreateUser(jsonInst)
         else:
-            print("unsupported instruction received")
-            #throw an error here
-        success = True
-    except:
-        success = False
+            mongo_ops.mongoCreateUser(jsonInst)
+    elif (inst == constants.DELETE_USER and schema_check.deleteUser(jsonInst)):
+        if (mongoOrOrient == constants.ORIENT_KEY):
+            orient_ops.orientDeleteUser(jsonInst)
+        else:
+            mongo_ops.mongoDeleteUser(jsonInst)
+    elif (inst == constants.UPDATE_USER and schema_check.updateUser(jsonInst)):
+        if (mongoOrOrient == constants.ORIENT_KEY):
+            orient_ops.orientUpdateUser(jsonInst)
+        else:
+            mongo_ops.mongoUpdateUser(jsonInst)
+    elif (inst == constants.CREATE_TIERLIST and schema_check.createTierList(jsonInst)):
+        if (mongoOrOrient == constants.ORIENT_KEY):
+            orient_ops.orientCreateTierList(jsonInst)
+        else:
+            mongo_ops.mongoCreateTierList(jsonInst)
+    elif (inst == constants.UPDATE_TIERLIST and schema_check.updateTierList(jsonInst)):
+        if (mongoOrOrient == constants.ORIENT_KEY):
+            orient_ops.orientUpdateTierList(jsonInst)
+        else:
+            mongo_ops.mongoUpdateTierList(jsonInst)
+    elif (inst == constants.DELETE_TIERLIST and schema_check.deleteTierList(jsonInst)):
+        if (mongoOrOrient == constants.ORIENT_KEY):
+            orient_ops.orientDeleteTierList(jsonInst)
+        else:
+            mongo_ops.mongoDeleteTierList(jsonInst)
+    else:
+        print("unsupported instruction received")
+        #throw an error here
+    success = True
+    #except:
+        #success = False
 
     if (not success):
         if (mongoOrOrient == constants.ORIENT_KEY):
