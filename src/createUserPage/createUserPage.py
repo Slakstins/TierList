@@ -5,13 +5,10 @@
 
 from pathlib import Path
 
-
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import sys
-sys.path.append('../..')
-from src.requests import registerUser
+from src import requests
 
 
 OUTPUT_PATH = Path(__file__).parent
@@ -55,7 +52,7 @@ def createUserPage(window):
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command= lambda: registerUser(window, entry_2.get("1.0","end-1c"), entry_1.get("1.0","end-1c")),
+        command= lambda: requests.registerUser(window, entry_2.get("1.0","end-1c"), entry_1.get("1.0","end-1c")),
         relief="flat"
     )
     button_1.place(

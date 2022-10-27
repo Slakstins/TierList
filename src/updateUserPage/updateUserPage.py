@@ -5,13 +5,9 @@
 
 from pathlib import Path
 
-
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import sys
-sys.path.append('../..')
-from src.requests import registerUser
 
 
 OUTPUT_PATH = Path(__file__).parent
@@ -21,7 +17,7 @@ ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-def createUserPage(window):
+def updateUserPage(window):
     canvas = Canvas(
         window,
         bg = "#FFFFFF",
@@ -55,7 +51,7 @@ def createUserPage(window):
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command= lambda: registerUser(window, entry_2.get("1.0","end-1c"), entry_1.get("1.0","end-1c")),
+        command=lambda: print("button_1 clicked"),
         relief="flat"
     )
     button_1.place(
@@ -125,7 +121,7 @@ def createUserPage(window):
         136.0,
         2.0,
         anchor="nw",
-        text="Create User",
+        text="Update User",
         fill="#000000",
         font=("Inter", 24 * -1)
     )

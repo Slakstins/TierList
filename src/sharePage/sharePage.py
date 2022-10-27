@@ -5,13 +5,9 @@
 
 from pathlib import Path
 
-
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-import sys
-sys.path.append('../..')
-from src.requests import registerUser
 
 
 OUTPUT_PATH = Path(__file__).parent
@@ -21,7 +17,7 @@ ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-def createUserPage(window):
+def sharePage(window):
     canvas = Canvas(
         window,
         bg = "#FFFFFF",
@@ -49,74 +45,74 @@ def createUserPage(window):
         fill="#5D5FEF",
         outline="")
 
-    button_image_1 = PhotoImage(
-        file=relative_to_assets("button_1.png"))
-    button_1 = Button(
-        image=button_image_1,
-        borderwidth=0,
-        highlightthickness=0,
-        command= lambda: registerUser(window, entry_2.get("1.0","end-1c"), entry_1.get("1.0","end-1c")),
-        relief="flat"
-    )
-    button_1.place(
-        x=229.0,
-        y=188.0,
-        width=127.0,
-        height=29.0
-    )
+    canvas.create_rectangle(
+        313.0,
+        56.0,
+        568.0,
+        299.0,
+        fill="#999393",
+        outline="")
 
     entry_image_1 = PhotoImage(
         file=relative_to_assets("entry_1.png"))
     entry_bg_1 = canvas.create_image(
-        292.5,
-        150.0,
+        441.0,
+        74.0,
         image=entry_image_1
     )
     entry_1 = Text(
         bd=0,
-        bg="#9C9C9C",
+        bg="#D9D9D9",
         highlightthickness=0
     )
     entry_1.place(
-        x=178.0,
-        y=133.0,
-        width=229.0,
-        height=32.0
+        x=325.0,
+        y=64.0,
+        width=232.0,
+        height=18.0
     )
 
     canvas.create_text(
-        178.0,
-        120.0,
+        318.0,
+        41.0,
         anchor="nw",
-        text="Password:",
+        text="Remove Access:",
         fill="#000000",
         font=("Inter", 12 * -1)
     )
 
+    canvas.create_rectangle(
+        26.0,
+        56.0,
+        281.0,
+        299.0,
+        fill="#999393",
+        outline="")
+
     entry_image_2 = PhotoImage(
         file=relative_to_assets("entry_2.png"))
     entry_bg_2 = canvas.create_image(
-        292.5,
-        85.0,
+        154.0,
+        74.0,
         image=entry_image_2
     )
     entry_2 = Text(
         bd=0,
-        bg="#9C9C9C",
+        bg="#D9D9D9",
         highlightthickness=0
     )
     entry_2.place(
-        x=178.0,
-        y=68.0,
-        width=229.0,
-        height=32.0
+        x=38.0,
+        y=64.0,
+        width=232.0,
+        height=18.0
     )
 
     canvas.create_text(
-        178.0,
-        55.0,
+        29.0,
+        41.0,
         anchor="nw",
-        text="Username:",
+        text="Give Access:",
         fill="#000000",
         font=("Inter", 12 * -1)
     )
@@ -125,9 +121,25 @@ def createUserPage(window):
         136.0,
         2.0,
         anchor="nw",
-        text="Create User",
+        text="Share:  ",
         fill="#000000",
         font=("Inter", 24 * -1)
+    )
+
+    button_image_1 = PhotoImage(
+        file=relative_to_assets("button_1.png"))
+    button_1 = Button(
+        image=button_image_1,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: print("button_1 clicked"),
+        relief="flat"
+    )
+    button_1.place(
+        x=15.0,
+        y=6.0,
+        width=59.0,
+        height=20.0
     )
 
     button_image_2 = PhotoImage(
@@ -140,10 +152,10 @@ def createUserPage(window):
         relief="flat"
     )
     button_2.place(
-        x=15.0,
-        y=6.0,
+        x=509.0,
+        y=7.0,
         width=59.0,
-        height=20.0
+        height=21.0
     )
     window.resizable(False, False)
     window.mainloop()
