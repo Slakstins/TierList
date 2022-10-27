@@ -1,15 +1,17 @@
 from pymongo import MongoClient
 import redis
 import pyorient
+import redis_queue_commands
 
 def testConnections():
-    global mClient, oClient, rClient, userDB
+    global mClient, oClient, rClient, userDB, rClient, tierlistDB
     #test mongo
     try:
         mClient = MongoClient("433-11.csse.rose-hulman.edu", 40000)
         print("Connected to Mongo Client")
         dbname = mClient['tierList']
-        userDB = dbname["Users"]
+        userDB = dbname["users"]
+        tierlistDB = dbname["tierlists"]
         #print(mclient.server_info(mon))
     except:
         print("Failed to connect to Mongo Client")
@@ -37,30 +39,51 @@ def testConnections():
 def registerUser(window, username, password):
     #TODO: fix 
     global currentUser
-    document = {
-        "Username": username,
-        "Password": password,
-    }
-    userDB.insert_one(document)
+    #this does everything required for the queue for registerUser:
+    redis_queue_commands.createUser(username, salt, hash_)
     currentUser = username
     from pages.browsePage.browsePage import browsePage
     browsePage(window)
     return
 
 def getUsername():
-    return userDB.find_one({"Username": currentUser})["Username"]
+    #why is this function necessary?
+    return userDB.find_one({"username": currentUser})["username"]
 
 def loginUser(window, username, password):
     #TODO: fix 
     global currentUser
-    user = userDB.find_one({"Username": username, "Password": password})
+    user = userDB.find_one({"username": username, "Password": password})
     if(user):
-        currentUser = user["Username"]
+        currentUser = user["username"]
         from pages.browsePage.browsePage import browsePage
         browsePage(window)
     else:
         print("login invalid")
 
+def userExists(username):
+    #used in redis_queue_commands.py. Thought it would be good to keep
+    #direct db requests outside of that file.
+    mUser = userDB.find_one({"username": username})
+    oUserLi = oClient.command("SELECT FROM USER WHERE username='%s'" % (username))
+    #only needs to exist on one DB to be considered existing
+    return (mUser is not None) or (len(oUserLi) > 0)
+
+def tierListExists(title, username):
+    #only needs to exist on one DB to be considered existing
+    tids = userDB.find_one({"username": username})["tierlist-ids"]
+    mTierlist = tierlistDB.find_one({"title": title, "_id": {"$in": tids}})
+    oUser = oClient.command("SELECT(SELECT FROM USER WHERE username='%s')" % (username))
+    oTierlistLi = oClient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username = '%s'"
+            % (title, username))
+    return (mTierList is not None) or len(oTierListLi) > 0
+
+
+
+
+
+
+    
 
     #orient tips:
     #Shouldn't need any classes other than USER for registration/login feature. I already created the USER vertex. Probably don't want to use schema restraints. 
