@@ -42,8 +42,8 @@ except:
 def pushToRedisQueue(doc):
     s = json.dumps(doc) + ""
     print(s)
-    rClient.lpush("orient", s)
-    rClient.lpush("mongo", s)
+    rClient.rpush("orient", s)
+    rClient.rpush("mongo", s)
 
 def createUser(username, salt, _hash):
     global mClient, rClient, currentUser
