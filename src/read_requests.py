@@ -1,10 +1,12 @@
+from pickletools import pybytes
 from pymongo import MongoClient
 import redis
 import pyorient
 import redis_queue_commands
+import bcrypt
 
 def testConnections():
-    global mClient, oClient, rClient, userDB, rClient, tierlistDB
+    global mClient, oClient, userDB, tierlistDB
     #test mongo
     try:
         mClient = MongoClient("433-11.csse.rose-hulman.edu", 40000)
@@ -16,14 +18,6 @@ def testConnections():
     except:
         print("Failed to connect to Mongo Client")
 
-    #test redis
-    try:
-        rClient = redis.Redis(host="433-10.csse.rose-hulman.edu", port=6379)
-        rClient.ping()
-        print("Connected to Redis Client")
-    except:
-        print("Failed to connect to Redis Client")
-    
     #test orient
     try:
         oClient = pyorient.OrientDB("433-12.csse.rose-hulman.edu", 2424)
@@ -37,12 +31,19 @@ def testConnections():
     return True
 
 def registerUser(window, username, password):
-    #TODO: fix 
+    #TODO: fix to use redis queue
     global currentUser
-    #this does everything required for the queue for registerUser:
-    redis_queue_commands.createUser(username, salt, hash_)
+    salt = bcrypt.gensalt()
+    hash = bcrypt.hashpw(password.encode('utf-8'), salt)
+    document = {
+        "username": username,
+        "salt": salt,
+        "hash": hash
+    }
+    userDB.insert_one(document)
+    #redis_queue_commands.createUser(username, salt, hash)
     currentUser = username
-    from pages.browsePage.browsePage import browsePage
+    from browsePage.browsePage import browsePage
     browsePage(window)
     return
 
@@ -51,12 +52,14 @@ def getUsername():
     return userDB.find_one({"username": currentUser})["username"]
 
 def loginUser(window, username, password):
-    #TODO: fix 
     global currentUser
-    user = userDB.find_one({"username": username, "Password": password})
-    if(user):
-        currentUser = user["username"]
-        from pages.browsePage.browsePage import browsePage
+    userForHash = userDB.find_one({"username": username})
+    hash = userForHash["hash"]
+    hashedPassword = bcrypt.hashpw(password.encode('utf-8'), hash)
+    userForValidation = userDB.find_one({"username": username, "hash": hashedPassword})
+    if(userForValidation):
+        currentUser = userForValidation["username"]
+        from browsePage.browsePage import browsePage
         browsePage(window)
     else:
         print("login invalid")
@@ -72,9 +75,9 @@ def userExists(username):
 def tierListExists(title, username):
     #only needs to exist on one DB to be considered existing
     tids = userDB.find_one({"username": username})["tierlist-ids"]
-    mTierlist = tierlistDB.find_one({"title": title, "_id": {"$in": tids}})
+    mTierList = tierlistDB.find_one({"title": title, "_id": {"$in": tids}})
     oUser = oClient.command("SELECT(SELECT FROM USER WHERE username='%s')" % (username))
-    oTierlistLi = oClient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username = '%s'"
+    oTierListLi = oClient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username = '%s'"
             % (title, username))
     return (mTierList is not None) or len(oTierListLi) > 0
 

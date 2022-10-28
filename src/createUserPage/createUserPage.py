@@ -8,7 +8,7 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-from src import requests
+from read_requests import registerUser
 
 
 OUTPUT_PATH = Path(__file__).parent
@@ -52,7 +52,7 @@ def createUserPage(window):
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command= lambda: requests.registerUser(window, entry_2.get("1.0","end-1c"), entry_1.get("1.0","end-1c")),
+        command= lambda: registerUser(window, entry_2.get("1.0","end-1c"), entry_1.get("1.0","end-1c")),
         relief="flat"
     )
     button_1.place(
@@ -129,11 +129,12 @@ def createUserPage(window):
 
     button_image_2 = PhotoImage(
         file=relative_to_assets("button_2.png"))
+    from loginPage.loginPage import loginPage
     button_2 = Button(
         image=button_image_2,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_2 clicked"),
+        command=lambda: loginPage(window),
         relief="flat"
     )
     button_2.place(

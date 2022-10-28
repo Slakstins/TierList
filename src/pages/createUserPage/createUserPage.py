@@ -11,7 +11,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import sys
 sys.path.append('../..')
-from src.requests import registerUser
+from read_requests import registerUser
 
 
 OUTPUT_PATH = Path(__file__).parent

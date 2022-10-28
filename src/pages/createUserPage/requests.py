@@ -42,7 +42,7 @@ def registerUser(window, username, password):
     #this does everything required for the queue for registerUser:
     redis_queue_commands.createUser(username, salt, hash_)
     currentUser = username
-    from pages.browsePage.browsePage import browsePage
+    from browsePage.browsePage import browsePage
     browsePage(window)
     return
 
@@ -56,7 +56,7 @@ def loginUser(window, username, password):
     user = userDB.find_one({"username": username, "Password": password})
     if(user):
         currentUser = user["username"]
-        from pages.browsePage.browsePage import browsePage
+        from browsePage.browsePage import browsePage
         browsePage(window)
     else:
         print("login invalid")

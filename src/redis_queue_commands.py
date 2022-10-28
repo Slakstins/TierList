@@ -1,20 +1,31 @@
-import requests
+import read_requests
 import json
+import redis
 
 #private to file
+#test redis
+try:
+    global rClient
+    rClient = redis.Redis(host="433-10.csse.rose-hulman.edu", port=6379)
+    rClient.ping()
+    print("Connected to Redis Client")
+except:
+    print("Failed to connect to Redis Client")
+
+
 def pushToRedisQueue(doc):
     rClient.lpush("orient", json.dumps(doc))
     rClient.lpush("mongo", json.dumps(doc))
 
-def createUser(username, salt, hash_)
+def createUser(username, salt, hash):
     global mClient, rClient
-    if (requests.userExists(username)):
+    if (read_requests.userExists(username)):
         return False
     doc = ({
         "instruction": "updateTierList",
         "username": username,
         "salt": salt,
-        "hash": hash_
+        "hash": hash
         })
     pushToRedisQueue(doc)
     return True
@@ -27,7 +38,7 @@ def deleteUser(username):
     pushToRedisQueue(doc)
     return True
 
-def updateUser(oldUsername, newUsername, newSalt, newHash)
+def updateUser(oldUsername, newUsername, newSalt, newHash):
     doc = ({
         "instruction": "updateUser",
         "oldUsername": oldUsername,
@@ -39,7 +50,7 @@ def updateUser(oldUsername, newUsername, newSalt, newHash)
     return True
 
 def createTierList(title, username):
-    if (tierListExists(title, username)):
+    if (read_requests.tierListExists(title, username)):
         return False
     doc = ({
         "instruction": "createTierList",
