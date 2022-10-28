@@ -1,33 +1,65 @@
 import read_requests
 import json
 import redis
+from pymongo import MongoClient
+import pyorient
+import bcrypt
 
-#private to file
 #test redis
+global mClient, oClient, userDB, tierlistDB
 try:
-    global rClient
     rClient = redis.Redis(host="433-10.csse.rose-hulman.edu", port=6379)
     rClient.ping()
     print("Connected to Redis Client")
 except:
     print("Failed to connect to Redis Client")
 
+#test mongo
+try:
+    mClient = MongoClient("433-11.csse.rose-hulman.edu", 40000)
+    print("Connected to Mongo Client")
+    dbname = mClient['tierList']
+    userDB = dbname["users"]
+    tierlistDB = dbname["tierlists"]
+    #print(mclient.server_info(mon))
+except:
+    print("Failed to connect to Mongo Client")
 
+#test orient
+try:
+    oClient = pyorient.OrientDB("433-12.csse.rose-hulman.edu", 2424)
+    oClient.connect("root", "ich3aeNg")
+    #username and password are both admin by default
+    oClient.db_open("TierList", "admin", "admin")
+    print("Connected to Orient Client")
+except:
+    print("Failed to connect to Orient Client")
+
+#add to redis queue
 def pushToRedisQueue(doc):
     rClient.lpush("orient", json.dumps(doc))
     rClient.lpush("mongo", json.dumps(doc))
 
 def createUser(username, salt, hash):
-    global mClient, rClient
+    global mClient, rClient, currentUser
     if (read_requests.userExists(username)):
         return False
-    doc = ({
-        "instruction": "updateTierList",
+
+    #replace with redis
+    document = {
         "username": username,
         "salt": salt,
         "hash": hash
-        })
-    pushToRedisQueue(doc)
+    }
+    userDB.insert_one(document)
+    currentUser = username
+    # doc = ({
+    #     "instruction": "updateTierList",
+    #     "username": username,
+    #     "salt": salt,
+    #     "hash": hash
+    #     })
+    # pushToRedisQueue(doc)
     return True
 
 def deleteUser(username):

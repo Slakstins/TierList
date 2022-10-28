@@ -5,44 +5,34 @@ import pyorient
 import redis_queue_commands
 import bcrypt
 
-def testConnections():
-    global mClient, oClient, userDB, tierlistDB
-    #test mongo
-    try:
-        mClient = MongoClient("433-11.csse.rose-hulman.edu", 40000)
-        print("Connected to Mongo Client")
-        dbname = mClient['tierList']
-        userDB = dbname["users"]
-        tierlistDB = dbname["tierlists"]
-        #print(mclient.server_info(mon))
-    except:
-        print("Failed to connect to Mongo Client")
+global mClient, oClient, userDB, tierlistDB
+#test mongo
+try:
+    mClient = MongoClient("433-11.csse.rose-hulman.edu", 40000)
+    print("Connected to Mongo Client")
+    dbname = mClient['tierList']
+    userDB = dbname["users"]
+    tierlistDB = dbname["tierlists"]
+    #print(mclient.server_info(mon))
+except:
+    print("Failed to connect to Mongo Client")
 
-    #test orient
-    try:
-        oClient = pyorient.OrientDB("433-12.csse.rose-hulman.edu", 2424)
-        oClient.connect("root", "ich3aeNg")
-        #username and password are both admin by default
-        oClient.db_open("TierList", "admin", "admin")
-        print("Connected to Orient Client")
-    except:
-        print("Failed to connect to Orient Client")
-
-    return True
+#test orient
+try:
+    oClient = pyorient.OrientDB("433-12.csse.rose-hulman.edu", 2424)
+    oClient.connect("root", "ich3aeNg")
+    #username and password are both admin by default
+    oClient.db_open("TierList", "admin", "admin")
+    print("Connected to Orient Client")
+except:
+    print("Failed to connect to Orient Client")
 
 def registerUser(window, username, password):
     #TODO: fix to use redis queue
     global currentUser
     salt = bcrypt.gensalt()
     hash = bcrypt.hashpw(password.encode('utf-8'), salt)
-    document = {
-        "username": username,
-        "salt": salt,
-        "hash": hash
-    }
-    userDB.insert_one(document)
-    #redis_queue_commands.createUser(username, salt, hash)
-    currentUser = username
+    redis_queue_commands.createUser(username, salt, hash)
     from browsePage.browsePage import browsePage
     browsePage(window)
     return
