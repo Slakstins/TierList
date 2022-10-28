@@ -81,9 +81,9 @@ def updateUser(oldUsername, newUsername, newSalt, newHash):
     global currentUser
 
     #replace with redis
-    userDB.update_one({"username": oldUsername}, {"$set": {"username": newUsername}})
     userDB.update_one({"username": oldUsername}, {"$set": {"salt": newSalt}})
     userDB.update_one({"username": oldUsername}, {"$set": {"hash": newHash}})
+    userDB.update_one({"username": oldUsername}, {"$set": {"username": newUsername}})
     currentUser = newUsername
 
     #redis

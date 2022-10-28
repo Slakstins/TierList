@@ -41,7 +41,7 @@ def loginUser(window, username, password):
     hashedPassword = bcrypt.hashpw(password.encode('utf-8'), hash)
     userForValidation = userDB.find_one({"username": username, "hash": hashedPassword})
     if(userForValidation):
-        currentUser = userForValidation["username"]
+        currentUser = username
         from browsePage.browsePage import browsePage
         browsePage(window)
     else:
@@ -57,6 +57,7 @@ def updateUser(window, username, password):
     accountPage(window)
 
 def getUsername():
+    global currentUser
     return currentUser
 
 def deleteUser(window):
