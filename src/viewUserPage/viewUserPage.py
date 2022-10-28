@@ -65,11 +65,12 @@ def viewUserPage(window):
 
     button_image_1 = PhotoImage(
         file=relative_to_assets("button_1.png"))
+    from accountPage.accountPage import accountPage
     button_1 = Button(
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_1 clicked"),
+        command=lambda: accountPage(window),
         relief="flat"
     )
     button_1.place(

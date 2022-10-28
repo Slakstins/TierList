@@ -55,11 +55,12 @@ def accountPage(window):
 
     button_image_1 = PhotoImage(
         file=relative_to_assets("button_1.png"))
+    from loginPage.loginPage import loginPage
     button_1 = Button(
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_1 clicked"),
+        command=lambda: loginPage(window),
         relief="flat"
     )
     button_1.place(
@@ -75,7 +76,7 @@ def accountPage(window):
         image=button_image_2,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_2 clicked"),
+        command=lambda: print("ADD DELETE"),
         relief="flat"
     )
     button_2.place(
@@ -87,11 +88,12 @@ def accountPage(window):
 
     button_image_3 = PhotoImage(
         file=relative_to_assets("button_3.png"))
+    from updateUserPage.updateUserPage import updateUserPage
     button_3 = Button(
         image=button_image_3,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_3 clicked"),
+        command=lambda: updateUserPage(window),
         relief="flat"
     )
     button_3.place(
@@ -103,11 +105,12 @@ def accountPage(window):
 
     button_image_4 = PhotoImage(
         file=relative_to_assets("button_4.png"))
+    from viewUserPage.viewUserPage import viewUserPage
     button_4 = Button(
         image=button_image_4,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_4 clicked"),
+        command=lambda: viewUserPage(window),
         relief="flat"
     )
     button_4.place(
@@ -128,11 +131,12 @@ def accountPage(window):
 
     button_image_5 = PhotoImage(
         file=relative_to_assets("button_5.png"))
+    from browsePage.browsePage import browsePage
     button_5 = Button(
         image=button_image_5,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_5 clicked"),
+        command=lambda: browsePage(window),
         relief="flat"
     )
     button_5.place(

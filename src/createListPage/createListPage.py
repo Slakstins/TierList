@@ -200,29 +200,14 @@ def createListPage(window):
         font=("Inter", 24 * -1)
     )
 
-    button_image_4 = PhotoImage(
-        file=relative_to_assets("button_4.png"))
-    button_4 = Button(
-        image=button_image_4,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: print("button_4 clicked"),
-        relief="flat"
-    )
-    button_4.place(
-        x=509.0,
-        y=7.0,
-        width=59.0,
-        height=21.0
-    )
-
     button_image_5 = PhotoImage(
         file=relative_to_assets("button_5.png"))
+    from browsePage.browsePage import browsePage
     button_5 = Button(
         image=button_image_5,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_5 clicked"),
+        command=lambda: browsePage(window),
         relief="flat"
     )
     button_5.place(
