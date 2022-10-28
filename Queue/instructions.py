@@ -19,8 +19,8 @@ def establishConnections():
     global mclient
     if (not mongoConnected):
         try:
-            mclient = MongoClient(constants.MONGO_VM, constants.MONGO_PORT)
-            val = mclient.tierList.command('ping')
+            mclient = MongoClient(constants.MONGO_VM, constants.MONGO_PORT, serverSelectionTimeoutMS=100)
+            val = mclient.server_info()
             mongoConnected = True
         except:
             mongoConnected = False

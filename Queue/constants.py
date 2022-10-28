@@ -1,5 +1,5 @@
 #clock time in seconds
-CLOCK=0.001
+CLOCK=0.1
 
 #Mongo constants:
 MONGO_VM = "433-11.csse.rose-hulman.edu"

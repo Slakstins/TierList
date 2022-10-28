@@ -15,7 +15,8 @@ def orientCreateUser(inst):
         "hash": inst["hash"]
         })
     instructions.oclient.command("CREATE VERTEX USER CONTENT " + json.dumps(user))
-    print("orient created user")
+    print("orient created user:")
+    print(str(user))
 
 #need to delete the user and all of the tier lists they had created
 def orientDeleteUser(inst):
