@@ -17,11 +17,11 @@ except:
 #test mongo
 try:
     mClient = MongoClient("433-11.csse.rose-hulman.edu", 40000)
+    print("Connected to Mongo Client")
     dbname = mClient['tierList']
     userDB = dbname["users"]
     tierlistDB = dbname["tierlists"]
-    print(mclient.server_info(mon))
-    print("Connected to Mongo Client")
+    #print(mclient.server_info(mon))
 except:
     print("Failed to connect to Mongo Client")
 
