@@ -82,6 +82,11 @@ def tierListExists(title, username):
             % (title, username))
     return (mTierList is not None) or len(oTierListLi) > 0
 
+def createTierList(window, name):
+    global currentUser
+    redis_queue_commands.createTierList(currentUser, name)
+    from browsePage.browsePage import browsePage
+    browsePage(window)
 
 
 

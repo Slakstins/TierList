@@ -100,12 +100,21 @@ def updateUser(oldUsername, newUsername, newSalt, newHash):
 def createTierList(title, username):
     if (front_end_requests.tierListExists(title, username)):
         return False
-    doc = ({
-        "instruction": "createTierList",
+
+    #replace with redis stuff
+    document = {
         "title": title,
-        "username": username
-        })
-    pushToRedisQueue(doc)
+        "username": username,
+    }
+    tierlistDB.insert_one(document)
+
+    #redis
+    # doc = ({
+    #     "instruction": "createTierList",
+    #     "title": title,
+    #     "username": username
+    #     })
+    # pushToRedisQueue(doc)
     return True
 
 
