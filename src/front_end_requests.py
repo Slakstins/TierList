@@ -50,8 +50,8 @@ def loginUser(window, username, password):
     global currentUser
     userForHash = userDB.find_one({"username": username})
     if(userForHash):
-        hash = userForHash["hash"]
-        hashedPassword = bcrypt.hashpw(password.encode('utf-8'), hash)
+        hash_ = userForHash["hash"]
+        hashedPassword = bcrypt.hashpw(password.encode('utf-8'), hash_)
         userForValidation = userDB.find_one({"username": username, "hash": hashedPassword})
         if(userForValidation):
             currentUser = username
@@ -65,8 +65,8 @@ def loginUser(window, username, password):
 def updateUser(window, username, password):
     global currentUser
     salt = bcrypt.gensalt()
-    hash = bcrypt.hashpw(password.encode('utf-8'), salt)
-    redis_queue_commands.updateUser(currentUser, username, salt, hash)
+    hash_ = bcrypt.hashpw(password.encode('utf-8'), salt)
+    redis_queue_commands.updateUser(currentUser, username, salt, hash_)
     currentUser = username
     from accountPage.accountPage import accountPage
     accountPage(window)
