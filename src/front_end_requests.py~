@@ -15,13 +15,13 @@ def tryConnections():
     global mClient, oClient, mConnected, oConnected, userDB, tierlistDB
     if (not mConnected):
         try:
-            mClient = MongoClient("433-11.csse.rose-hulman.edu", 40000, serverSelectionTimeoutMS=100)
+            mClient = MongoClient("433-11.csse.rose-hulman.edu", 40000, serverSelectionTimeoutMS=1000)
             dbname = mClient['tierList']
             userDB = dbname["users"]
             tierlistDB = dbname["tierlists"]
-            mConnected = True
-            client.server_info()
+            mClient.server_info()
             print("Connected to Mongo Client")
+            mConnected = True
         except:
             mConnected = False
             print("Failed to connect to Mongo Client")
@@ -47,8 +47,10 @@ def registerUser(window, username, password):
     res = userExists(username)
     if (res is None):
         print("Connection down. try again later")
+        return
     if (res is True):
         print("username already in use")
+        return
     else:
         salt = bcrypt.gensalt()
         hash = bcrypt.hashpw(password.encode('utf-8'), salt)
@@ -62,18 +64,37 @@ def registerUser(window, username, password):
 def loginUser(window, username, password):
     global currentUser, userDB, oClient, oConnected, mConnected
 
+    tryConnections()
+    if (not (oConnected or mConnected)):
+        print("no connection available")
     mUser = None
     oUsrArray = None
+    found = False
     if (oConnected):
-        oUsrArray = oClient.command("SELECT FROM USER WHERE username='%s'" % (username))
-        print("LENGTH IS : " + str(len(oUsrArray)))
-    if (mConnected):
-        mUser = userDB.find_one({"username": username})
+        try:
+            oUsrArray = oClient.command("SELECT FROM USER WHERE username='%s'" % (username))
+            if (len(oUsrArray) > 0):
+                found = True
+        except:
+            oConnected = False
+    elif (mConnected):
+        try:
+            mUser = userDB.find_one({"username": username})
+            if (mUser is not None):
+                found = True
+        except:
+            mConnected = False
+
+    if (not found):
+        print("user not found")
+        return
+
     if (mUser is not None):
         userForSalt = mUser
     elif (oUsrArray is not None and len(oUsrArray) > 0) :
         userForSalt = oUsrArray[0]
     else:
+        #neither DB is connected
         print("weird case. What do we do?")
         return
 
@@ -88,7 +109,7 @@ def loginUser(window, username, password):
             from browsePage.browsePage import browsePage
             browsePage(window)
         else:
-            print("login invalid")
+            print("incorrect password")
     else:
         print("login invalid")
 
@@ -142,6 +163,7 @@ def userExists(username):
     #only needs to exist on one DB to be considered existing
     if (not (mConnected or oConnected)):
         #returns None if dbs are no longer connected
+        print("NO CONNECTION FOR USR EXISTS")
         return None
     else:
         return (mUser is not None) or ((oUserLi is not None) and (len(oUserLi) > 0))

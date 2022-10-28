@@ -17,13 +17,15 @@ except:
 #test mongo
 try:
     mClient = MongoClient("433-11.csse.rose-hulman.edu", 40000)
+    client.server_info()
     dbname = mClient['tierList']
     userDB = dbname["users"]
     tierlistDB = dbname["tierlists"]
     print(mclient.server_info(mon))
     print("Connected to Mongo Client")
 except:
-    print("Failed to connect to Mongo Client")
+    pass
+    #print("Failed to connect to Mongo Client")
 
 #test orient
 try:
@@ -33,7 +35,8 @@ try:
     oClient.db_open("TierList", "admin", "admin")
     print("Connected to Orient Client")
 except:
-    print("Failed to connect to Orient Client")
+    pass
+    #print("Failed to connect to Orient Client")
 
 #add to redis queue
 def pushToRedisQueue(doc):
