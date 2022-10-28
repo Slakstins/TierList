@@ -47,11 +47,12 @@ def updateUserPage(window):
 
     button_image_1 = PhotoImage(
         file=relative_to_assets("button_1.png"))
+    from front_end_requests import updateUser
     button_1 = Button(
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("ADD UPDATE"),
+        command=lambda: updateUser(window, entry_2.get("1.0","end-1c"), entry_1.get("1.0","end-1c")),
         relief="flat"
     )
     button_1.place(

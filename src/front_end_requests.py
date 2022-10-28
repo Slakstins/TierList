@@ -28,18 +28,11 @@ except:
     print("Failed to connect to Orient Client")
 
 def registerUser(window, username, password):
-    #TODO: fix to use redis queue
-    global currentUser
     salt = bcrypt.gensalt()
     hash = bcrypt.hashpw(password.encode('utf-8'), salt)
     redis_queue_commands.createUser(username, salt, hash)
     from browsePage.browsePage import browsePage
     browsePage(window)
-    return
-
-def getUsername():
-    #why is this function necessary?
-    return userDB.find_one({"username": currentUser})["username"]
 
 def loginUser(window, username, password):
     global currentUser
@@ -53,6 +46,23 @@ def loginUser(window, username, password):
         browsePage(window)
     else:
         print("login invalid")
+
+def updateUser(window, username, password):
+    global currentUser
+    salt = bcrypt.gensalt()
+    hash = bcrypt.hashpw(password.encode('utf-8'), salt)
+    redis_queue_commands.updateUser(currentUser, username, salt, hash)
+    currentUser = username
+    from accountPage.accountPage import accountPage
+    accountPage(window)
+
+def getUsername():
+    return currentUser
+
+def deleteUser(window):
+    redis_queue_commands.deleteUser(currentUser)
+    from loginPage.loginPage import loginPage
+    loginPage(window)
 
 def userExists(username):
     #used in redis_queue_commands.py. Thought it would be good to keep

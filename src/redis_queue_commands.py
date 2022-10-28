@@ -1,4 +1,4 @@
-import read_requests
+import front_end_requests
 import json
 import redis
 from pymongo import MongoClient
@@ -42,7 +42,7 @@ def pushToRedisQueue(doc):
 
 def createUser(username, salt, hash):
     global mClient, rClient, currentUser
-    if (read_requests.userExists(username)):
+    if (front_end_requests.userExists(username)):
         return False
 
     #replace with redis
@@ -53,6 +53,8 @@ def createUser(username, salt, hash):
     }
     userDB.insert_one(document)
     currentUser = username
+
+    # redis
     # doc = ({
     #     "instruction": "updateTierList",
     #     "username": username,
@@ -63,26 +65,40 @@ def createUser(username, salt, hash):
     return True
 
 def deleteUser(username):
-    doc = ({
-        "instruction": "deleteUser",
-        "username": username
-        })
-    pushToRedisQueue(doc)
+
+    #replace with redis
+    userDB.delete_one({"username": username})
+
+    #redis
+    # doc = ({
+    #     "instruction": "deleteUser",
+    #     "username": username
+    #     })
+    # pushToRedisQueue(doc)
     return True
 
 def updateUser(oldUsername, newUsername, newSalt, newHash):
-    doc = ({
-        "instruction": "updateUser",
-        "oldUsername": oldUsername,
-        "newUsername": newUsername,
-        "newSalt": newSalt,
-        "newHash": newHash
-        })
-    pushToRedisQueue(doc)
+    global currentUser
+
+    #replace with redis
+    userDB.update_one({"username": oldUsername}, {"$set": {"username": newUsername}})
+    userDB.update_one({"username": oldUsername}, {"$set": {"salt": newSalt}})
+    userDB.update_one({"username": oldUsername}, {"$set": {"hash": newHash}})
+    currentUser = newUsername
+
+    #redis
+    # doc = ({
+    #     "instruction": "updateUser",
+    #     "oldUsername": oldUsername,
+    #     "newUsername": newUsername,
+    #     "newSalt": newSalt,
+    #     "newHash": newHash
+    #     })
+    # pushToRedisQueue(doc)
     return True
 
 def createTierList(title, username):
-    if (read_requests.tierListExists(title, username)):
+    if (front_end_requests.tierListExists(title, username)):
         return False
     doc = ({
         "instruction": "createTierList",

@@ -72,11 +72,12 @@ def accountPage(window):
 
     button_image_2 = PhotoImage(
         file=relative_to_assets("button_2.png"))
+    from front_end_requests import deleteUser
     button_2 = Button(
         image=button_image_2,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("ADD DELETE"),
+        command=lambda: deleteUser(window),
         relief="flat"
     )
     button_2.place(

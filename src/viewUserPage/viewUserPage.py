@@ -45,11 +45,12 @@ def viewUserPage(window):
         fill="#5D5FEF",
         outline="")
 
+    from front_end_requests import getUsername
     canvas.create_text(
         247.0,
         61.0,
         anchor="nw",
-        text="Username:",
+        text="Username: " + getUsername(),
         fill="#000000",
         font=("Inter", 16 * -1)
     )
