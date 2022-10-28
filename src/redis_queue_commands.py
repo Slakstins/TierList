@@ -37,64 +37,73 @@ except:
 
 #add to redis queue
 def pushToRedisQueue(doc):
-    rClient.lpush("orient", json.dumps(doc))
-    rClient.lpush("mongo", json.dumps(doc))
+    s = json.dumps(doc) + ""
+    print(s)
+    rClient.lpush("orient", s)
+    rClient.lpush("mongo", s)
 
-def createUser(username, salt, hash):
+def createUser(username, salt, _hash):
     global mClient, rClient, currentUser
     if (front_end_requests.userExists(username)):
         return False
 
     #replace with redis
-    document = {
-        "username": username,
-        "salt": salt,
-        "hash": hash
-    }
-    userDB.insert_one(document)
-    currentUser = username
+    #document = {
+    #    "username": username,
+    #    "salt": salt,
+    #    "hash": hash
+    #}
+    #userDB.insert_one(document)
+    #currentUser = username
 
-    # redis
-    # doc = ({
-    #     "instruction": "updateTierList",
-    #     "username": username,
-    #     "salt": salt,
-    #     "hash": hash
-    #     })
-    # pushToRedisQueue(doc)
+    redis
+    doc = ({
+        "instruction": "createUser",
+        "username": username,
+        "salt": salt.decode("utf-8"),
+        "hash": _hash.decode("utf-8")
+        })
+    json.dumps(doc)
+    print(doc)
+    
+    pushToRedisQueue(doc)
     return True
 
 def deleteUser(username):
 
     #replace with redis
-    userDB.delete_one({"username": username})
+    #userDB.delete_one({"username": username})
 
     #redis
-    # doc = ({
-    #     "instruction": "deleteUser",
-    #     "username": username
-    #     })
-    # pushToRedisQueue(doc)
+    doc = ({
+        "instruction": "deleteUser",
+        "username": username
+        })
+    print(doc)
+
+    pushToRedisQueue(doc)
     return True
 
 def updateUser(oldUsername, newUsername, newSalt, newHash):
     global currentUser
 
     #replace with redis
-    userDB.update_one({"username": oldUsername}, {"$set": {"salt": newSalt}})
-    userDB.update_one({"username": oldUsername}, {"$set": {"hash": newHash}})
-    userDB.update_one({"username": oldUsername}, {"$set": {"username": newUsername}})
-    currentUser = newUsername
+    #userDB.update_one({"username": oldUsername}, {"$set": {"salt": newSalt}})
+    #userDB.update_one({"username": oldUsername}, {"$set": {"hash": newHash}})
+    #userDB.update_one({"username": oldUsername}, {"$set": {"username": newUsername}})
 
     #redis
-    # doc = ({
-    #     "instruction": "updateUser",
-    #     "oldUsername": oldUsername,
-    #     "newUsername": newUsername,
-    #     "newSalt": newSalt,
-    #     "newHash": newHash
-    #     })
-    # pushToRedisQueue(doc)
+    doc = ({
+        "instruction": "updateUser",
+        "oldUsername": oldUsername,
+        "newUsername": newUsername,
+        "newSalt": newSalt.decode('utf-8'),
+        "newHash": newHash.decode('utf-8')
+        })
+    print(doc)
+    pushToRedisQueue(doc)
+    currentUser = newUsername
+
     return True
 
 def createTierList(title, username):
@@ -102,19 +111,19 @@ def createTierList(title, username):
         return False
 
     #replace with redis stuff
-    document = {
-        "title": title,
-        "username": username,
-    }
-    tierlistDB.insert_one(document)
+    #document = {
+    #    "title": title,
+    #    "username": username,
+    #}
+    #tierlistDB.insert_one(document)
 
     #redis
-    # doc = ({
-    #     "instruction": "createTierList",
-    #     "title": title,
-    #     "username": username
-    #     })
-    # pushToRedisQueue(doc)
+    doc = ({
+        "instruction": "createTierList",
+        "title": title,
+        "username": username
+        })
+    pushToRedisQueue(doc)
     return True
 
 
