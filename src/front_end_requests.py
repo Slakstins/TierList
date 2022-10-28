@@ -28,22 +28,27 @@ except:
     print("Failed to connect to Orient Client")
 
 def registerUser(window, username, password):
+    global currentUser
     salt = bcrypt.gensalt()
     hash = bcrypt.hashpw(password.encode('utf-8'), salt)
     redis_queue_commands.createUser(username, salt, hash)
+    currentUser = username
     from browsePage.browsePage import browsePage
     browsePage(window)
 
 def loginUser(window, username, password):
     global currentUser
     userForHash = userDB.find_one({"username": username})
-    hash = userForHash["hash"]
-    hashedPassword = bcrypt.hashpw(password.encode('utf-8'), hash)
-    userForValidation = userDB.find_one({"username": username, "hash": hashedPassword})
-    if(userForValidation):
-        currentUser = username
-        from browsePage.browsePage import browsePage
-        browsePage(window)
+    if(userForHash):
+        hash = userForHash["hash"]
+        hashedPassword = bcrypt.hashpw(password.encode('utf-8'), hash)
+        userForValidation = userDB.find_one({"username": username, "hash": hashedPassword})
+        if(userForValidation):
+            currentUser = username
+            from browsePage.browsePage import browsePage
+            browsePage(window)
+        else:
+            print("login invalid")
     else:
         print("login invalid")
 
