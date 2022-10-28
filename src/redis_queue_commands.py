@@ -44,8 +44,6 @@ def pushToRedisQueue(doc):
 
 def createUser(username, salt, _hash):
     global mClient, rClient, currentUser
-    if (front_end_requests.userExists(username)):
-        return False
     #replace with redis
     #document = {
     #    "username": username,
@@ -55,7 +53,6 @@ def createUser(username, salt, _hash):
     #userDB.insert_one(document)
     #currentUser = username
 
-    redis
     doc = ({
         "instruction": "createUser",
         "username": username,
