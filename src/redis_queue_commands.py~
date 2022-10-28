@@ -25,7 +25,7 @@ try:
     print("Connected to Mongo Client")
 except:
     pass
-    #print("Failed to connect to Mongo Client")
+    print("Failed to connect to Mongo Client")
 
 #test orient
 try:

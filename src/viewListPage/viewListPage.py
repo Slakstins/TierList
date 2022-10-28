@@ -218,11 +218,12 @@ def viewListPage(window):
 
     button_image_5 = PhotoImage(
         file=relative_to_assets("button_5.png"))
+    from browsePage.browsePage import browsePage
     button_5 = Button(
         image=button_image_5,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_5 clicked"),
+        command=lambda: browsePage(window),
         relief="flat"
     )
     button_5.place(

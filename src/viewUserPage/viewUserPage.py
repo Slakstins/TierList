@@ -45,11 +45,12 @@ def viewUserPage(window):
         fill="#5D5FEF",
         outline="")
 
+    from front_end_requests import getUsername
     canvas.create_text(
         247.0,
         61.0,
         anchor="nw",
-        text="Username:",
+        text="Username: " + getUsername(),
         fill="#000000",
         font=("Inter", 16 * -1)
     )
@@ -65,11 +66,12 @@ def viewUserPage(window):
 
     button_image_1 = PhotoImage(
         file=relative_to_assets("button_1.png"))
+    from accountPage.accountPage import accountPage
     button_1 = Button(
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_1 clicked"),
+        command=lambda: accountPage(window),
         relief="flat"
     )
     button_1.place(

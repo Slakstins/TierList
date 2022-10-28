@@ -9,6 +9,6 @@ class tkWindow:
         self.root.configure(bg = "#FFFFFF")
 
     def start(self):
-        from pages.loginPage.loginPage import loginPage
+        from loginPage.loginPage import loginPage
         self.canvas = loginPage(self.root)
         self.root.mainloop()    

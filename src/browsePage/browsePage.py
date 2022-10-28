@@ -9,7 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
-from pages.accountPage.accountPage import accountPage
+from accountPage.accountPage import accountPage
 
 
 OUTPUT_PATH = Path(__file__).parent
@@ -108,11 +108,12 @@ def browsePage(window):
 
     button_image_2 = PhotoImage(
         file=relative_to_assets("button_2.png"))
+    from createListPage.createListPage import createListPage
     button_2 = Button(
         image=button_image_2,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_2 clicked"),
+        command=lambda: createListPage(window),
         relief="flat"
     )
     button_2.place(
