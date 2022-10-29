@@ -8,7 +8,7 @@ import instructions
 def mongoCreateUser(inst):
     users = instructions.mclient.tierList.users
     users.insert_one({'username': inst["username"], 'salt': inst["salt"], 'hash': inst["hash"]})
-    print("mongo creating user")
+    print("mongo created user")
 
 def mongoDeleteUser(inst):
     users = instructions.mclient['tierList'].users
@@ -17,12 +17,12 @@ def mongoDeleteUser(inst):
     tierlists.delete_many({"username": inst["username"]})
     #delete the user
     users.delete_one({"username": inst["username"]})
-    print("mongo deleting user")
+    print("mongo deleted user")
 
 def mongoUpdateUser(inst):
     users = instructions.mclient['tierList'].users
     users.update_one({"username": inst["oldUsername"]}, {"$set": {"username": inst["newUsername"], "salt": inst["newSalt"], "hash": inst["newHash"]}})
-    print("mongo updating user")
+    print("mongo updated user")
 
 def mongoCreateTierList(inst):
     tierlists = instructions.mclient['tierList'].tierlists
