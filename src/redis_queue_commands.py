@@ -40,8 +40,7 @@ except:
 
 #add to redis queue
 def pushToRedisQueue(doc):
-    s = json.dumps(doc) + ""
-    print(s)
+    s = json.dumps(doc)
     rClient.rpush("orient", s)
     rClient.rpush("mongo", s)
 
@@ -62,9 +61,8 @@ def createUser(username, salt, _hash):
         "salt": salt.decode("utf-8"),
         "hash": _hash.decode("utf-8")
         })
-    json.dumps(doc)
     print(doc)
-    
+    json.dumps(doc)
     pushToRedisQueue(doc)
     return True
 

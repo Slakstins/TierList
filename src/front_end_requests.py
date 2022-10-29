@@ -13,6 +13,10 @@ oConnected = False
 
 def tryConnections():
     global mClient, oClient, mConnected, oConnected, userDB, tierlistDB
+    #it's okay to have just one connection. Only need to reconnect if current connections fail
+    if (oConnected or mConnected):
+        print("CONNECTION STABLE")
+        return True
     if (not mConnected):
         try:
             mClient = MongoClient("433-11.csse.rose-hulman.edu", 40000, serverSelectionTimeoutMS=1000)
@@ -39,16 +43,20 @@ def tryConnections():
             print("Failed to connect to Orient Client")
     return oConnected or mConnected
 
+print(" opening windows")
 tryConnections()
 
 def registerUser(window, username, password):
-    global currentUser, userDB, oClient
-    tryConnections()
+    global currentUser, userDB, oClient, oConnected, mConnected
+    connected = tryConnections()
+    if (not connected):
+        print("cannot register user if dbs are down")
+        return
     res = userExists(username)
     if (res is None):
         print("Connection down. try again later")
         return
-    if (res is True):
+    elif (res is True):
         print("username already in use")
         return
     else:
@@ -64,9 +72,10 @@ def registerUser(window, username, password):
 def loginUser(window, username, password):
     global currentUser, userDB, oClient, oConnected, mConnected
 
-    tryConnections()
-    if (not (oConnected or mConnected)):
-        print("no connection available")
+    connected = tryConnections()
+    if (not connected):
+        print("cannot login user if dbs are down")
+        return
     mUser = None
     oUsrArray = None
     found = False
@@ -101,10 +110,11 @@ def loginUser(window, username, password):
     if(userForSalt is not None):
         #TODO
         #shouldn't salt be used here to append to password before running hash function?
-        print(str(userForSalt))
-        salt = userForSalt.salt
+        #ternary operator
+        salt = userForSalt.salt if oConnected else userForSalt["salt"]
+        hash_ = userForSalt.hash if oConnected else userForSalt["hash"]
         hashedPassword = bcrypt.hashpw(password.encode('utf-8'), salt.encode('utf-8'))
-        if(hashedPassword.decode('utf-8') == userForSalt.hash):
+        if(hashedPassword.decode('utf-8') == hash_):
             currentUser = username
             from browsePage.browsePage import browsePage
             browsePage(window)
@@ -117,7 +127,7 @@ def updateUser(window, username, password):
     global currentUser
     connected = tryConnections()
     if (not connected):
-        print("db not connected")
+        print("cannot update user if dbs are down")
         return
     salt = bcrypt.gensalt()
     hash_ = bcrypt.hashpw(password.encode('utf-8'), salt)
@@ -141,24 +151,18 @@ def deleteUser(window):
 
 def userExists(username):
     global mClient, oClient, mConnected, oConnected
-    #used in redis_queue_commands.py. Thought it would be good to keep
-    #direct db requests outside of that file.
-    tryConnections()
     mUser = None
     oUserLi = None
-    print("checking user exists")
+    print("checking user exists with front end")
     if (oConnected):
         try:
             mUser = userDB.find_one({"username": username})
         except:
             mConnected = False
-            print('mconnection failed')
     if (mConnected):
         try:
             oUserLi = oClient.command("SELECT FROM USER WHERE username='%s'" % (username))
-            print(oUserLi)
         except:
-            print('oconnection failed')
             oConnected = False
     #only needs to exist on one DB to be considered existing
     if (not (mConnected or oConnected)):
