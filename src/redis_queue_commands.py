@@ -9,7 +9,8 @@ import bcrypt
 global mClient, oClient, userDB, tierlistDB
 try:
     rClient = redis.Redis(host="433-13.csse.rose-hulman.edu", port=6379)
-    rClient.ping()
+    pongHopefully = rClient.ping()
+    print(pongHopefully)
     print("Connected to Redis Client")
 except:
     print("Failed to connect to Redis Client")
