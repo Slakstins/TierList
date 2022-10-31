@@ -56,11 +56,12 @@ def createListPage(window):
     canvas.create_rectangle(
         20.0,
         49.0,
-        564.0,
-        125.0,
+        568.0,
+        116.0,
         fill="#262626",
         outline="")
 
+    #name
     entry_image_1 = PhotoImage(
         file=relative_to_assets("entry_1.png"))
     entry_bg_1 = canvas.create_image(
@@ -91,47 +92,14 @@ def createListPage(window):
 
     button_image_1 = PhotoImage(
         file=relative_to_assets("button_1.png"))
-    from front_end_requests import createTierList
     button_1 = Button(
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: createTierList(window, entry_1.get("1.0","end-1c")),
+        command=lambda: print("SAVE"),
         relief="flat"
     )
     button_1.place(
-        x=168.0,
-        y=280.0,
-        width=50.0,
-        height=20.0
-    )
-
-    button_image_2 = PhotoImage(
-        file=relative_to_assets("button_2.png"))
-    button_2 = Button(
-        image=button_image_2,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: print("button_2 clicked"),
-        relief="flat"
-    )
-    button_2.place(
-        x=98.0,
-        y=280.0,
-        width=50.0,
-        height=20.0
-    )
-
-    button_image_3 = PhotoImage(
-        file=relative_to_assets("button_3.png"))
-    button_3 = Button(
-        image=button_image_3,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: print("button_3 clicked"),
-        relief="flat"
-    )
-    button_3.place(
         x=29.0,
         y=280.0,
         width=50.0,
@@ -142,9 +110,11 @@ def createListPage(window):
         file=relative_to_assets("entry_2.png"))
     entry_bg_2 = canvas.create_image(
         472.5,
-        87.0,
+        83.0,
         image=entry_image_2
     )
+    
+    #first text box
     entry_2 = Text(
         bd=0,
         bg="#D9D9D9",
@@ -152,34 +122,147 @@ def createListPage(window):
     )
     entry_2.place(
         x=394.0,
-        y=74.0,
+        y=70.0,
         width=157.0,
         height=24.0
     )
 
     canvas.create_rectangle(
-        29.0,
-        59.0,
+        86.0,
+        55.0,
         372.0,
-        114.0,
+        109.0,
         fill="#D9D9D9",
         outline="")
 
+    #first red box
     entry_image_3 = PhotoImage(
         file=relative_to_assets("entry_3.png"))
     entry_bg_3 = canvas.create_image(
         59.5,
-        87.0,
+        83.0,
         image=entry_image_3
     )
     entry_3 = Text(
         bd=0,
-        bg="#8F0000",
+        bg="#FF7E7E",
         highlightthickness=0
     )
     entry_3.place(
         x=37.0,
-        y=68.0,
+        y=64.0,
+        width=45.0,
+        height=36.0
+    )
+
+    canvas.create_rectangle(
+        20.0,
+        119.0,
+        568.0,
+        186.0,
+        fill="#262626",
+        outline="")
+
+    #second text box
+    entry_image_4 = PhotoImage(
+        file=relative_to_assets("entry_4.png"))
+    entry_bg_4 = canvas.create_image(
+        472.5,
+        153.0,
+        image=entry_image_4
+    )
+    entry_4 = Text(
+        bd=0,
+        bg="#D9D9D9",
+        highlightthickness=0
+    )
+    entry_4.place(
+        x=394.0,
+        y=140.0,
+        width=157.0,
+        height=24.0
+    )
+
+    canvas.create_rectangle(
+        86.0,
+        125.0,
+        372.0,
+        179.0,
+        fill="#D9D9D9",
+        outline="")
+
+    #second red box
+    entry_image_5 = PhotoImage(
+        file=relative_to_assets("entry_5.png"))
+    entry_bg_5 = canvas.create_image(
+        59.5,
+        153.0,
+        image=entry_image_5
+    )
+    entry_5 = Text(
+        bd=0,
+        bg="#FF7E7E",
+        highlightthickness=0
+    )
+    entry_5.place(
+        x=37.0,
+        y=134.0,
+        width=45.0,
+        height=36.0
+    )
+
+    canvas.create_rectangle(
+        20.0,
+        189.0,
+        568.0,
+        256.0,
+        fill="#262626",
+        outline="")
+
+    #third text box
+    entry_image_6 = PhotoImage(
+        file=relative_to_assets("entry_6.png"))
+    entry_bg_6 = canvas.create_image(
+        472.5,
+        223.0,
+        image=entry_image_6
+    )
+    entry_6 = Text(
+        bd=0,
+        bg="#D9D9D9",
+        highlightthickness=0
+    )
+    entry_6.place(
+        x=394.0,
+        y=210.0,
+        width=157.0,
+        height=24.0
+    )
+
+    canvas.create_rectangle(
+        86.0,
+        195.0,
+        372.0,
+        249.0,
+        fill="#D9D9D9",
+        outline="")
+
+    #third red box
+    entry_image_7 = PhotoImage(
+        file=relative_to_assets("entry_7.png"))
+    entry_bg_7 = canvas.create_image(
+        59.5,
+        223.0,
+        image=entry_image_7
+    )
+    entry_7 = Text(
+        bd=0,
+        bg="#FF7E7E",
+        highlightthickness=0
+    )
+    entry_7.place(
+        x=37.0,
+        y=204.0,
         width=45.0,
         height=36.0
     )
@@ -201,17 +284,18 @@ def createListPage(window):
         font=("Inter", 24 * -1)
     )
 
-    button_image_5 = PhotoImage(
-        file=relative_to_assets("button_5.png"))
+    button_image_2 = PhotoImage(
+        file=relative_to_assets("button_2.png"))
+
     from browsePage.browsePage import browsePage
-    button_5 = Button(
-        image=button_image_5,
+    button_2 = Button(
+        image=button_image_2,
         borderwidth=0,
         highlightthickness=0,
         command=lambda: browsePage(window),
         relief="flat"
     )
-    button_5.place(
+    button_2.place(
         x=15.0,
         y=6.0,
         width=59.0,

@@ -1,9 +1,6 @@
 import front_end_requests
 import json
 import redis
-from pymongo import MongoClient
-import pyorient
-import bcrypt
 
 #test redis
 global mClient, oClient, userDB, tierlistDB
@@ -14,47 +11,13 @@ try:
 except:
     print("Failed to connect to Redis Client")
 
-#test mongo
-try:
-    mClient = MongoClient("433-11.csse.rose-hulman.edu", 40000)
-    client.server_info()
-    dbname = mClient['tierList']
-    userDB = dbname["users"]
-    tierlistDB = dbname["tierlists"]
-    print(mclient.server_info(mon))
-    print("Connected to Mongo Client")
-except:
-    pass
-    #print("Failed to connect to Mongo Client")
-
-#test orient
-try:
-    oClient = pyorient.OrientDB("433-12.csse.rose-hulman.edu", 2424)
-    oClient.connect("root", "ich3aeNg")
-    #username and password are both admin by default
-    oClient.db_open("TierList", "admin", "admin")
-    print("Connected to Orient Client")
-except:
-    pass
-    #print("Failed to connect to Orient Client")
-
-#add to redis queue
 def pushToRedisQueue(doc):
     s = json.dumps(doc)
     rClient.rpush("orient", s)
     rClient.rpush("mongo", s)
 
 def createUser(username, salt, _hash):
-    global mClient, rClient, currentUser
-    #replace with redis
-    #document = {
-    #    "username": username,
-    #    "salt": salt,
-    #    "hash": hash
-    #}
-    #userDB.insert_one(document)
-    #currentUser = username
-
+    global rClient, currentUser
     doc = ({
         "instruction": "createUser",
         "username": username,
@@ -67,11 +30,6 @@ def createUser(username, salt, _hash):
     return True
 
 def deleteUser(username):
-
-    #replace with redis
-    #userDB.delete_one({"username": username})
-
-    #redis
     doc = ({
         "instruction": "deleteUser",
         "username": username
@@ -83,13 +41,6 @@ def deleteUser(username):
 
 def updateUser(oldUsername, newUsername, newSalt, newHash):
     global currentUser
-
-    #replace with redis
-    #userDB.update_one({"username": oldUsername}, {"$set": {"salt": newSalt}})
-    #userDB.update_one({"username": oldUsername}, {"$set": {"hash": newHash}})
-    #userDB.update_one({"username": oldUsername}, {"$set": {"username": newUsername}})
-
-    #redis
     doc = ({
         "instruction": "updateUser",
         "oldUsername": oldUsername,
@@ -107,14 +58,6 @@ def createTierList(title, username):
     if (front_end_requests.tierListExists(title, username)):
         return False
 
-    #replace with redis stuff
-    #document = {
-    #    "title": title,
-    #    "username": username,
-    #}
-    #tierlistDB.insert_one(document)
-
-    #redis
     doc = ({
         "instruction": "createTierList",
         "title": title,
@@ -135,7 +78,6 @@ def updateTierList(oldTitle, newTitle, username, tiers):
     pushToRedisQueue(doc)
     return True
 
-
 def deleteTierList(username, title):
     doc = ({
         "username": username,
@@ -143,6 +85,3 @@ def deleteTierList(username, title):
         })
     pushToRedisQueue(doc)
     return True
-
-
-
