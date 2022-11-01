@@ -19,7 +19,7 @@ ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-def loginPage(window):
+def loginPage(window, username = "", password = ""):
     canvas = Canvas(
         window,
         bg = "#FFFFFF",
@@ -90,7 +90,7 @@ def loginPage(window):
     entry_1 = Text(
         bd=0,
         bg="#9C9C9C",
-        highlightthickness=0
+        highlightthickness=0,
     )
     entry_1.place(
         x=178.0,
@@ -98,6 +98,7 @@ def loginPage(window):
         width=229.0,
         height=32.0
     )
+    entry_1.insert('1.0', password)
 
     canvas.create_text(
         178.0,
@@ -119,6 +120,7 @@ def loginPage(window):
         bd=0,
         bg="#9C9C9C",
         highlightthickness=0
+        
     )
     entry_2.place(
         x=178.0,
@@ -126,6 +128,7 @@ def loginPage(window):
         width=229.0,
         height=32.0
     )
+    entry_2.insert('1.0', username)
 
     canvas.create_text(
         178.0,

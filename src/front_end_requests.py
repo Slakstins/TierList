@@ -58,9 +58,9 @@ def registerUser(window, username, password):
         salt = bcrypt.gensalt()
         hash = bcrypt.hashpw(password.encode('utf-8'), salt)
         if (redis_queue_commands.createUser(username, salt, hash)):
-            currentUser = username
-            from browsePage.browsePage import browsePage
-            browsePage(window)
+            #redirect to login page to fix identical username issue
+            from loginPage.loginPage import loginPage
+            loginPage(window, username, password)
         else:
             print("failed to create user. try a different username or try again later")
 
@@ -112,7 +112,7 @@ def loginUser(window, username, password):
             from browsePage.browsePage import browsePage
             browsePage(window)
         else:
-            print("incorrect password")
+            print("incorrect password. It is possible another user made an account with your username before you did")
     else:
         print("login invalid")
 
@@ -140,7 +140,7 @@ def deleteUser(window):
         return
     redis_queue_commands.deleteUser(currentUser)
     from loginPage.loginPage import loginPage
-    loginPage(window)
+    loginPage(window, "", "")
 
 def userExists(username):
     global mClient, oClient, mConnected, oConnected
