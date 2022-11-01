@@ -1,6 +1,5 @@
 from pickletools import pybytes
 from pymongo import MongoClient
-import redis
 import pyorient
 import redis_queue_commands
 import bcrypt
@@ -8,8 +7,6 @@ import bcrypt
 global mClient, oClient, userDB, tierlistDB, mConnected, oConnected
 mConnected = False
 oConnected = False
-#test mongo
-
 
 def tryConnections():
     global mClient, oClient, mConnected, oConnected, userDB, tierlistDB
@@ -29,8 +26,6 @@ def tryConnections():
         except:
             mConnected = False
             print("Failed to connect to Mongo Client")
-
-    #test orient
     if (not oConnected):
         try:
             oClient = pyorient.OrientDB("433-12.csse.rose-hulman.edu", 2424)
@@ -108,8 +103,6 @@ def loginUser(window, username, password):
         return
 
     if(userForSalt is not None):
-        #TODO
-        #shouldn't salt be used here to append to password before running hash function?
         #ternary operator
         salt = userForSalt.salt if oConnected else userForSalt["salt"]
         hash_ = userForSalt.hash if oConnected else userForSalt["hash"]

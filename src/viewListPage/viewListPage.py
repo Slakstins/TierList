@@ -45,6 +45,22 @@ def viewListPage(window):
         fill="#6D6B6B",
         outline="")
 
+    button_image_1 = PhotoImage(
+        file=relative_to_assets("button_1.png"))
+    button_1 = Button(
+        image=button_image_1,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: print("DELETE"),
+        relief="flat"
+    )
+    button_1.place(
+        x=153.0,
+        y=280.0,
+        width=50.0,
+        height=20.0
+    )
+
     canvas.create_rectangle(
         15.0,
         44.0,
@@ -56,28 +72,106 @@ def viewListPage(window):
     canvas.create_rectangle(
         20.0,
         49.0,
-        564.0,
-        125.0,
+        568.0,
+        116.0,
         fill="#262626",
+        outline="")
+
+    canvas.create_rectangle(
+        86.0,
+        55.0,
+        561.0,
+        109.0,
+        fill="#D9D9D9",
         outline="")
 
     entry_image_1 = PhotoImage(
         file=relative_to_assets("entry_1.png"))
     entry_bg_1 = canvas.create_image(
-        471.5,
-        290.5,
+        59.5,
+        83.0,
         image=entry_image_1
     )
     entry_1 = Text(
         bd=0,
-        bg="#D9D9D9",
+        bg="#FF7E7E",
         highlightthickness=0
     )
     entry_1.place(
-        x=392.0,
-        y=280.0,
-        width=159.0,
-        height=19.0
+        x=37.0,
+        y=64.0,
+        width=45.0,
+        height=36.0
+    )
+
+    canvas.create_rectangle(
+        20.0,
+        119.0,
+        568.0,
+        186.0,
+        fill="#262626",
+        outline="")
+
+    canvas.create_rectangle(
+        86.0,
+        125.0,
+        561.0,
+        179.0,
+        fill="#D9D9D9",
+        outline="")
+
+    entry_image_2 = PhotoImage(
+        file=relative_to_assets("entry_2.png"))
+    entry_bg_2 = canvas.create_image(
+        59.5,
+        153.0,
+        image=entry_image_2
+    )
+    entry_2 = Text(
+        bd=0,
+        bg="#FF7E7E",
+        highlightthickness=0
+    )
+    entry_2.place(
+        x=37.0,
+        y=134.0,
+        width=45.0,
+        height=36.0
+    )
+
+    canvas.create_rectangle(
+        20.0,
+        189.0,
+        568.0,
+        256.0,
+        fill="#262626",
+        outline="")
+
+    canvas.create_rectangle(
+        86.0,
+        195.0,
+        561.0,
+        249.0,
+        fill="#D9D9D9",
+        outline="")
+
+    entry_image_3 = PhotoImage(
+        file=relative_to_assets("entry_3.png"))
+    entry_bg_3 = canvas.create_image(
+        59.5,
+        223.0,
+        image=entry_image_3
+    )
+    entry_3 = Text(
+        bd=0,
+        bg="#FF7E7E",
+        highlightthickness=0
+    )
+    entry_3.place(
+        x=37.0,
+        y=204.0,
+        width=45.0,
+        height=36.0
     )
 
     canvas.create_text(
@@ -89,33 +183,17 @@ def viewListPage(window):
         font=("Inter", 12 * -1)
     )
 
-    button_image_1 = PhotoImage(
-        file=relative_to_assets("button_1.png"))
-    button_1 = Button(
-        image=button_image_1,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: print("button_1 clicked"),
-        relief="flat"
-    )
-    button_1.place(
-        x=168.0,
-        y=280.0,
-        width=50.0,
-        height=20.0
-    )
-
     button_image_2 = PhotoImage(
         file=relative_to_assets("button_2.png"))
     button_2 = Button(
         image=button_image_2,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_2 clicked"),
+        command=lambda: print("SAVE"),
         relief="flat"
     )
     button_2.place(
-        x=98.0,
+        x=29.0,
         y=280.0,
         width=50.0,
         height=20.0
@@ -127,60 +205,14 @@ def viewListPage(window):
         image=button_image_3,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_3 clicked"),
+        command=lambda: print("EDIT"),
         relief="flat"
     )
     button_3.place(
-        x=29.0,
+        x=91.0,
         y=280.0,
         width=50.0,
         height=20.0
-    )
-
-    entry_image_2 = PhotoImage(
-        file=relative_to_assets("entry_2.png"))
-    entry_bg_2 = canvas.create_image(
-        472.5,
-        87.0,
-        image=entry_image_2
-    )
-    entry_2 = Text(
-        bd=0,
-        bg="#D9D9D9",
-        highlightthickness=0
-    )
-    entry_2.place(
-        x=394.0,
-        y=74.0,
-        width=157.0,
-        height=24.0
-    )
-
-    canvas.create_rectangle(
-        29.0,
-        59.0,
-        372.0,
-        114.0,
-        fill="#D9D9D9",
-        outline="")
-
-    entry_image_3 = PhotoImage(
-        file=relative_to_assets("entry_3.png"))
-    entry_bg_3 = canvas.create_image(
-        59.5,
-        87.0,
-        image=entry_image_3
-    )
-    entry_3 = Text(
-        bd=0,
-        bg="#8F0000",
-        highlightthickness=0
-    )
-    entry_3.place(
-        x=37.0,
-        y=68.0,
-        width=45.0,
-        height=36.0
     )
 
     canvas.create_rectangle(
@@ -206,27 +238,10 @@ def viewListPage(window):
         image=button_image_4,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_4 clicked"),
+        command=lambda: print("DELETE"),
         relief="flat"
     )
     button_4.place(
-        x=509.0,
-        y=7.0,
-        width=59.0,
-        height=21.0
-    )
-
-    button_image_5 = PhotoImage(
-        file=relative_to_assets("button_5.png"))
-    from browsePage.browsePage import browsePage
-    button_5 = Button(
-        image=button_image_5,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: browsePage(window),
-        relief="flat"
-    )
-    button_5.place(
         x=15.0,
         y=6.0,
         width=59.0,
