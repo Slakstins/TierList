@@ -1,20 +1,12 @@
-import front_end_requests
+import front_end_cud
 import json
-import redis
+import connections
 
-#test redis
-global mClient, oClient, userDB, tierlistDB
-try:
-    rClient = redis.Redis(host="433-13.csse.rose-hulman.edu", port=6379)
-    rClient.ping()
-    print("Connected to Redis Client")
-except:
-    print("Failed to connect to Redis Client")
 
 def pushToRedisQueue(doc):
     s = json.dumps(doc)
-    rClient.rpush("orient", s)
-    rClient.rpush("mongo", s)
+    connections.rClient.rpush("orient", s)
+    connections.rClient.rpush("mongo", s)
 
 def createUser(username, salt, _hash):
     global rClient, currentUser
@@ -55,7 +47,7 @@ def updateUser(oldUsername, newUsername, newSalt, newHash):
     return True
 
 def createTierList(title, username):
-    if (front_end_requests.tierListExists(title, username)):
+    if (front_end_cud.tierListExists(title, username)):
         return False
 
     doc = ({

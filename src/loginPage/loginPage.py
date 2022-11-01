@@ -9,7 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
-from front_end_requests import loginUser
+from front_end_cud import loginUser
 
 
 OUTPUT_PATH = Path(__file__).parent

@@ -72,7 +72,7 @@ def accountPage(window):
 
     button_image_2 = PhotoImage(
         file=relative_to_assets("button_2.png"))
-    from front_end_requests import deleteUser
+    from front_end_cud import deleteUser
     button_2 = Button(
         image=button_image_2,
         borderwidth=0,

@@ -45,7 +45,7 @@ def viewUserPage(window):
         fill="#5D5FEF",
         outline="")
 
-    from front_end_requests import getUsername
+    from front_end_cud import getUsername
     canvas.create_text(
         247.0,
         61.0,
