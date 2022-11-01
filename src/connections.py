@@ -17,7 +17,6 @@ def tryConnections():
 
     #it's okay to have just one connection. Only need to reconnect if current connections fail
     if (connectionsAreValid()):
-        print("CONNECTION STABLE")
         return True
     if (not mConnected):
         try:
