@@ -100,22 +100,36 @@ def deleteUser(window):
     from loginPage.loginPage import loginPage
     loginPage(window)
 
-def createTierList(window, name):
+def createTierList(window, title, t1, l1, t2, l2, t3, l3):
     global currentUser
-    redis_queue_commands.createTierList(currentUser, name)
-    from browsePage.browsePage import browsePage
-    browsePage(window)
+    connected = connections.tryConnections()
+    if (not connected):
+        print("db not connected")
+        return
+
+    res = front_end_r.tierListExists(currentUser, title)
+    if (res is None):
+        print("Connection down. pushing instruction to queue regardless")
+    elif (res is True):
+        print("username already in use")
+        return
+    else:
+        if(redis_queue_commands.createTierList(currentUser, title, l1, t1, l2, t2, l3, t3)):
+            from browsePage.browsePage import browsePage
+            browsePage(window)
+        else:
+            print("Failed to create tier list")
 
 
 #probably going to end up replacing this. Our use case will probably require
 #to be able to use the mTierList or oTierListLi for calls after this so it
 #won't be all that helpful.
-def tierListExists(title, username):
-    #only needs to exist on one DB to be considered existing
-    tids = connections.userDB.find_one({"username": username})["tierlist-ids"]
-    mTierList = connections.tierlistDB.find_one({"title": title, "_id": {"$in": tids}})
-    oUser = connections.oClient.command("SELECT(SELECT FROM USER WHERE username='%s')" % (username))
-    oTierListLi = connections.oClient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username = '%s'"
-            % (title, username))
-    return (mTierList is not None) or len(oTierListLi) > 0
+# def tierListExists(title, username):
+#     #only needs to exist on one DB to be considered existing
+#     tids = connections.userDB.find_one({"username": username})["tierlist-ids"]
+#     mTierList = connections.tierlistDB.find_one({"title": title, "_id": {"$in": tids}})
+#     oUser = connections.oClient.command("SELECT(SELECT FROM USER WHERE username='%s')" % (username))
+#     oTierListLi = connections.oClient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username = '%s'"
+#             % (title, username))
+#     return (mTierList is not None) or len(oTierListLi) > 0
 

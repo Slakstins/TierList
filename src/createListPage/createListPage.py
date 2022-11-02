@@ -92,11 +92,13 @@ def createListPage(window):
 
     button_image_1 = PhotoImage(
         file=relative_to_assets("button_1.png"))
+    
+    from front_end_cud import createTierList
     button_1 = Button(
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("SAVE"),
+        command=lambda: createTierList(window,entry_1.get("1.0","end-1c"),entry_2.get("1.0","end-1c"), entry_3.get("1.0","end-1c"), entry_4.get("1.0","end-1c"), entry_5.get("1.0","end-1c"), entry_6.get("1.0","end-1c"), entry_7.get("1.0","end-1c")), #window, name, l1, e1,
         relief="flat"
     )
     button_1.place(

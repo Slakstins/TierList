@@ -1,4 +1,3 @@
-import front_end_cud
 import json
 import connections
 
@@ -46,16 +45,33 @@ def updateUser(oldUsername, newUsername, newSalt, newHash):
 
     return True
 
-def createTierList(title, username):
-    if (front_end_cud.tierListExists(title, username)):
-        return False
+def createTierList(currentUser, title, l1, t1, l2, t2, l3, t3):
+    t1List = t1.split(',')
+    t2List = t2.split(',')
+    t3List = t3.split(',')
 
     doc = ({
         "instruction": "createTierList",
         "title": title,
-        "username": username
+        "username": currentUser,
+        "tiers": [{
+            "lable1": [{
+                "name": l1,
+                "values": t1List
+            }],
+            "lable2": [{
+                "name": l2,
+                "values": t2List
+            }],
+            "lable3": [{
+                "name": l3,
+                "values": t3List
+            }]
+        }]
         })
-    pushToRedisQueue(doc)
+
+    print(doc)
+    #pushToRedisQueue(doc)
     return True
 
 
