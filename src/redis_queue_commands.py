@@ -71,25 +71,15 @@ def createTierList(currentUser, title, l1, t1, l2, t2, l3, t3):
         })
 
     print(doc)
+    print("TODO: PUSH CREATE TIER LIST TO REDIS QUEUE")
     #pushToRedisQueue(doc)
     return True
 
 
-def updateTierList(oldTitle, newTitle, username, tiers):
-    doc = ({
-        "instruction": "updateTierList",
-        "oldTitle": oldTitle,
-        "newTitle": newTitle,
-        "username": username,
-        "tiers": tiers
-        })
-    pushToRedisQueue(doc)
+def updateTierList(currentUser, oldTitle, newTitle, l1, t1, l2, t2, l3, t3):
+    print("TODO: PUSH UPDATE TIER LIST TO REDIS QUEUE")
     return True
 
 def deleteTierList(username, title):
-    doc = ({
-        "username": username,
-        "title": title
-        })
-    pushToRedisQueue(doc)
+    print("TODO: PUSH DELETETIERLIST TO REDIS QUEUE")
     return True

@@ -75,26 +75,29 @@ def browsePage(window):
         fill="#999393",
         outline="")
 
-    #generate list buttons
-    from front_end_cud import getUsername
-    curYVal = 61
-    for tierList in getTierLists(getUsername()):
-        print(tierList)
-        #place button
-        tempButton = Button(
-            text=tierList["title"],
+    def getButton(title):
+        button = Button(
+            text=title,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: accountPage(window),
+            command=lambda: viewListPage(window, title),
             relief="flat"
         )
-        tempButton.place(
+        return button
+
+    #generate list buttons
+    from front_end_cud import getUsername
+    from viewListPage.viewListPage import viewListPage
+    curYVal = 61
+    for tierList in getTierLists(getUsername()):
+        
+        title = tierList["title"]
+        getButton(title).place(
             x=31.0,
             y=curYVal,
             width=243.0,
             height=25.0
         )
-
         #update y val
         curYVal += 30
 
