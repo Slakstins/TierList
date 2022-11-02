@@ -44,6 +44,32 @@ def tierListExists(username, title):
         return None
     else:
         return (mList is not None) or ((oList is not None) and (len(oList) > 0))
+    
+def getTierLists(username):
+    mList = None
+    oList = None
+    if(connections.oConnected):
+        try:
+            mList = connections.tierlistDB.find({"username": username})
+        except:
+            connections.mConnected = False
+    if(connections.mConnected):
+        try:
+            oList = connections.oClient.command("SELECT FROM TIERLIST WHERE in.out[@Class = 'USER'].username = '%s'"
+            % (username))
+        except:
+            connections.oConnected = False
+    if (not (connections.mConnected or connections.oConnected)):
+        #returns None if dbs are no longer connected
+        print("NO CONNECTION FOR TIERLIST EXISTS")
+        return None
+    else:
+        if(mList):
+            return mList
+        elif(oList):
+            return oList
+        else:
+            return []
 
 
     #only needs to exist on one DB to be considered existing

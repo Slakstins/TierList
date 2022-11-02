@@ -10,6 +10,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
 from accountPage.accountPage import accountPage
+from front_end_r import getTierLists
 
 
 OUTPUT_PATH = Path(__file__).parent
@@ -47,6 +48,7 @@ def browsePage(window):
         fill="#5D5FEF",
         outline="")
 
+    #shared lists
     canvas.create_rectangle(
         313.0,
         56.0,
@@ -64,6 +66,7 @@ def browsePage(window):
         font=("Inter", 12 * -1)
     )
 
+    #my lists
     canvas.create_rectangle(
         26.0,
         56.0,
@@ -71,6 +74,29 @@ def browsePage(window):
         299.0,
         fill="#999393",
         outline="")
+
+    #generate list buttons
+    from front_end_cud import getUsername
+    curYVal = 61
+    for tierList in getTierLists(getUsername()):
+        print(tierList)
+        #place button
+        tempButton = Button(
+            text=tierList["title"],
+            borderwidth=0,
+            highlightthickness=0,
+            command=lambda: accountPage(window),
+            relief="flat"
+        )
+        tempButton.place(
+            x=31.0,
+            y=curYVal,
+            width=243.0,
+            height=25.0
+        )
+
+        #update y val
+        curYVal += 30
 
     canvas.create_text(
         29.0,
