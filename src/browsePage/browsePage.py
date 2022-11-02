@@ -89,6 +89,8 @@ def browsePage(window):
     from front_end_cud import getUsername
     from viewListPage.viewListPage import viewListPage
     curYVal = 61
+
+    print("UNAME: " + getUsername())
     for tierList in getTierLists(getUsername()):
         
         title = tierList["title"]
