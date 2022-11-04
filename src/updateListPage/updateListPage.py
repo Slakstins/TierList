@@ -7,7 +7,11 @@ from pathlib import Path
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+from tkinter import INSERT, Tk, Canvas, Entry, Text, Button, PhotoImage
+from front_end_cud import getUsername
+
+from front_end_r import getTierListByTitle
+from util import arrayToPrettyString
 
 
 OUTPUT_PATH = Path(__file__).parent
@@ -17,7 +21,9 @@ ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-def createListPage(window):
+def updateListPage(window, title):
+    tierList = getTierListByTitle(getUsername(),title)
+    
     canvas = Canvas(
         window,
         bg = "#FFFFFF",
@@ -74,6 +80,8 @@ def createListPage(window):
         bg="#D9D9D9",
         highlightthickness=0
     )
+    entry_1.insert(INSERT, tierList["title"])
+    
     entry_1.place(
         x=392.0,
         y=280.0,
@@ -93,12 +101,12 @@ def createListPage(window):
     button_image_1 = PhotoImage(
         file=relative_to_assets("button_1.png"))
     
-    from front_end_cud import createTierList
+    from front_end_cud import updateTierList
     button_1 = Button(
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: createTierList(window,entry_1.get("1.0","end-1c"),entry_2.get("1.0","end-1c"), entry_3.get("1.0","end-1c"), entry_4.get("1.0","end-1c"), entry_5.get("1.0","end-1c"), entry_6.get("1.0","end-1c"), entry_7.get("1.0","end-1c")), #window, name, l1, e1,
+        command=lambda: updateTierList(window, title, entry_1.get("1.0","end-1c"),entry_2.get("1.0","end-1c"), entry_3.get("1.0","end-1c"), entry_4.get("1.0","end-1c"), entry_5.get("1.0","end-1c"), entry_6.get("1.0","end-1c"), entry_7.get("1.0","end-1c")), #window, name, l1, e1,
         relief="flat"
     )
     button_1.place(
@@ -122,6 +130,7 @@ def createListPage(window):
         bg="#D9D9D9",
         highlightthickness=0
     )
+    entry_2.insert(INSERT, arrayToPrettyString(tierList["tiers"][0]["label1"][0]["values"]))
     entry_2.place(
         x=394.0,
         y=70.0,
@@ -150,6 +159,8 @@ def createListPage(window):
         bg="#FF7E7E",
         highlightthickness=0
     )
+    entry_3.insert(INSERT, tierList["tiers"][0]["label1"][0]["name"])
+    
     entry_3.place(
         x=37.0,
         y=64.0,
@@ -178,6 +189,7 @@ def createListPage(window):
         bg="#D9D9D9",
         highlightthickness=0
     )
+    entry_4.insert(INSERT, arrayToPrettyString(tierList["tiers"][0]["label2"][0]["values"]))
     entry_4.place(
         x=394.0,
         y=140.0,
@@ -206,6 +218,7 @@ def createListPage(window):
         bg="#FF7E7E",
         highlightthickness=0
     )
+    entry_5.insert(INSERT, tierList["tiers"][0]["label2"][0]["name"])
     entry_5.place(
         x=37.0,
         y=134.0,
@@ -234,6 +247,7 @@ def createListPage(window):
         bg="#D9D9D9",
         highlightthickness=0
     )
+    entry_6.insert(INSERT, arrayToPrettyString(tierList["tiers"][0]["label3"][0]["values"]))
     entry_6.place(
         x=394.0,
         y=210.0,
@@ -262,6 +276,7 @@ def createListPage(window):
         bg="#FF7E7E",
         highlightthickness=0
     )
+    entry_7.insert(INSERT, tierList["tiers"][0]["label3"][0]["name"])
     entry_7.place(
         x=37.0,
         y=204.0,
@@ -281,7 +296,7 @@ def createListPage(window):
         136.0,
         2.0,
         anchor="nw",
-        text="Create List",
+        text="Update List: " + title,
         fill="#000000",
         font=("Inter", 24 * -1)
     )
@@ -289,12 +304,12 @@ def createListPage(window):
     button_image_2 = PhotoImage(
         file=relative_to_assets("button_2.png"))
 
-    from browsePage.browsePage import browsePage
+    from viewListPage.viewListPage import viewListPage
     button_2 = Button(
         image=button_image_2,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: browsePage(window),
+        command=lambda: viewListPage(window, title),
         relief="flat"
     )
     button_2.place(

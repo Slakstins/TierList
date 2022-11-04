@@ -28,7 +28,7 @@ def mongoCreateTierList(inst):
     tierlists = instructions.mclient['tierList'].tierlists
     users = instructions.mclient['tierList'].users
 
-    li = tierlists.insert_one({"title": inst["title"]})
+    li = tierlists.insert_one({"title": inst["title"], "tiers": inst["tiers"]})
     #add the id of the new tier list to the list of tierlists created by the user
     users.update_one({"username": inst["username"]}, {"$push": {"tierlist-ids": li.inserted_id}})
     print("mongo create tier list")

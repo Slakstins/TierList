@@ -7,8 +7,13 @@ from pathlib import Path
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+from tkinter import Label, Tk, Canvas, Entry, Text, Button, PhotoImage, INSERT
 
+from browsePage.browsePage import browsePage
+from front_end_cud import getUsername
+from front_end_r import getTierListByTitle
+from redis_queue_commands import deleteTierList
+from util import arrayToPrettyString
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets")
@@ -17,7 +22,9 @@ ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-def viewListPage(window):
+def viewListPage(window, title):
+    tierList = getTierListByTitle(getUsername(),title)
+
     canvas = Canvas(
         window,
         bg = "#FFFFFF",
@@ -47,11 +54,13 @@ def viewListPage(window):
 
     button_image_1 = PhotoImage(
         file=relative_to_assets("button_1.png"))
+
+    from front_end_cud import deleteTierList
     button_1 = Button(
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("DELETE"),
+        command=lambda: deleteTierList(window, title),
         relief="flat"
     )
     button_1.place(
@@ -97,6 +106,8 @@ def viewListPage(window):
         bg="#FF7E7E",
         highlightthickness=0
     )
+    entry_1.insert(INSERT, tierList["tiers"][0]["label1"][0]["name"])
+
     entry_1.place(
         x=37.0,
         y=64.0,
@@ -132,6 +143,7 @@ def viewListPage(window):
         bg="#FF7E7E",
         highlightthickness=0
     )
+    entry_2.insert(INSERT, tierList["tiers"][0]["label2"][0]["name"])
     entry_2.place(
         x=37.0,
         y=134.0,
@@ -167,6 +179,7 @@ def viewListPage(window):
         bg="#FF7E7E",
         highlightthickness=0
     )
+    entry_3.insert(INSERT, tierList["tiers"][0]["label3"][0]["name"])
     entry_3.place(
         x=37.0,
         y=204.0,
@@ -178,34 +191,36 @@ def viewListPage(window):
         342.0,
         282.0,
         anchor="nw",
-        text="Name:",
+        text="Name: " + title,
         fill="#000000",
         font=("Inter", 12 * -1)
     )
 
-    button_image_2 = PhotoImage(
-        file=relative_to_assets("button_2.png"))
-    button_2 = Button(
-        image=button_image_2,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: print("SAVE"),
-        relief="flat"
-    )
-    button_2.place(
-        x=29.0,
-        y=280.0,
-        width=50.0,
-        height=20.0
-    )
+    # button_image_2 = PhotoImage(
+    #     file=relative_to_assets("button_2.png"))
+    # button_2 = Button(
+    #     image=button_image_2,
+    #     borderwidth=0,
+    #     highlightthickness=0,
+    #     command=lambda: print("TODO: SHARE"),
+    #     relief="flat"
+    # )
+    # button_2.place(
+    #     x=29.0,
+    #     y=280.0,
+    #     width=50.0,
+    #     height=20.0
+    # )
 
     button_image_3 = PhotoImage(
         file=relative_to_assets("button_3.png"))
+
+    from updateListPage.updateListPage import updateListPage
     button_3 = Button(
         image=button_image_3,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("EDIT"),
+        command=lambda: updateListPage(window, title),
         relief="flat"
     )
     button_3.place(
@@ -227,18 +242,47 @@ def viewListPage(window):
         136.0,
         2.0,
         anchor="nw",
-        text="View List",
+        text="View List: " + title,
         fill="#000000",
         font=("Inter", 24 * -1)
     )
 
     button_image_4 = PhotoImage(
         file=relative_to_assets("button_4.png"))
+
+    canvas.create_text(
+        100.0,
+        64.0,
+        anchor="nw",
+        text=arrayToPrettyString(tierList["tiers"][0]["label1"][0]["values"]),
+        fill="#000000",
+        font=("Inter", 24 * -1)
+    )
+
+    canvas.create_text(
+        100.0,
+        134.0,
+        anchor="nw",
+        text=arrayToPrettyString(tierList["tiers"][0]["label2"][0]["values"]),
+        fill="#000000",
+        font=("Inter", 24 * -1)
+    )
+
+    canvas.create_text(
+        100.0,
+        204.0,
+        anchor="nw",
+        text=arrayToPrettyString(tierList["tiers"][0]["label3"][0]["values"]),
+        fill="#000000",
+        font=("Inter", 24 * -1)
+    )
+
+    from browsePage.browsePage import browsePage
     button_4 = Button(
         image=button_image_4,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("DELETE"),
+        command=lambda: browsePage(window),
         relief="flat"
     )
     button_4.place(

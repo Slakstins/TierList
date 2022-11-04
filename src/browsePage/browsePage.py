@@ -10,6 +10,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
 from accountPage.accountPage import accountPage
+from front_end_r import getTierLists
 
 
 OUTPUT_PATH = Path(__file__).parent
@@ -47,30 +48,58 @@ def browsePage(window):
         fill="#5D5FEF",
         outline="")
 
+    #shared lists
+    # canvas.create_rectangle(
+    #     313.0,
+    #     56.0,
+    #     568.0,
+    #     299.0,
+    #     fill="#999393",
+    #     outline="")
+
+    # canvas.create_text(
+    #     318.0,
+    #     41.0,
+    #     anchor="nw",
+    #     text="Shared Lists:",
+    #     fill="#000000",
+    #     font=("Inter", 12 * -1)
+    # )
+
+    #my lists
     canvas.create_rectangle(
-        313.0,
+        26.0,
         56.0,
         568.0,
         299.0,
         fill="#999393",
         outline="")
 
-    canvas.create_text(
-        318.0,
-        41.0,
-        anchor="nw",
-        text="Shared Lists:",
-        fill="#000000",
-        font=("Inter", 12 * -1)
-    )
+    def getButton(title):
+        button = Button(
+            text=title,
+            borderwidth=0,
+            highlightthickness=0,
+            command=lambda: viewListPage(window, title),
+            relief="flat"
+        )
+        return button
 
-    canvas.create_rectangle(
-        26.0,
-        56.0,
-        281.0,
-        299.0,
-        fill="#999393",
-        outline="")
+    #generate list buttons
+    from front_end_cud import getUsername
+    from viewListPage.viewListPage import viewListPage
+    curYVal = 61
+
+    for tierList in getTierLists(getUsername()):
+        title = tierList["title"]
+        getButton(title).place(
+            x=184.0,
+            y=curYVal,
+            width=243.0,
+            height=25.0
+        )
+        #update y val
+        curYVal += 30
 
     canvas.create_text(
         29.0,
