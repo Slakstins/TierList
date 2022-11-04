@@ -55,15 +55,15 @@ def createTierList(currentUser, title, l1, t1, l2, t2, l3, t3):
         "title": title,
         "username": currentUser,
         "tiers": [{
-            "lable1": [{
+            "label1": [{
                 "name": l1,
                 "values": t1List
             }],
-            "lable2": [{
+            "label2": [{
                 "name": l2,
                 "values": t2List
             }],
-            "lable3": [{
+            "label3": [{
                 "name": l3,
                 "values": t3List
             }]
@@ -72,14 +72,45 @@ def createTierList(currentUser, title, l1, t1, l2, t2, l3, t3):
 
     print(doc)
     print("TODO: PUSH CREATE TIER LIST TO REDIS QUEUE")
-    #pushToRedisQueue(doc)
+    pushToRedisQueue(doc)
     return True
 
 
 def updateTierList(currentUser, oldTitle, newTitle, l1, t1, l2, t2, l3, t3):
+    t1List = t1.split(',')
+    t2List = t2.split(',')
+    t3List = t3.split(',')
+
+    doc = ({
+        "instruction": "updateTierList",
+        "oldTitle": oldTitle,
+        "newTitle": newTitle,
+        "username": currentUser,
+        "tiers": [{
+            "label1": [{
+                "name": l1,
+                "values": t1List
+            }],
+            "label2": [{
+                "name": l2,
+                "values": t2List
+            }],
+            "label3": [{
+                "name": l3,
+                "values": t3List
+            }]
+        }]
+        })
     print("TODO: PUSH UPDATE TIER LIST TO REDIS QUEUE")
+    pushToRedisQueue(doc)
     return True
 
-def deleteTierList(username, title):
+def deleteTierList(currentUser, title):
+    doc = ({
+        "instruction": "deleteTierList",
+        "username": currentUser,
+        "title": title
+    })
+    pushToRedisQueue(doc)
     print("TODO: PUSH DELETETIERLIST TO REDIS QUEUE")
     return True

@@ -90,7 +90,6 @@ def browsePage(window):
     from viewListPage.viewListPage import viewListPage
     curYVal = 61
 
-    print("UNAME: " + getUsername())
     for tierList in getTierLists(getUsername()):
         
         title = tierList["title"]

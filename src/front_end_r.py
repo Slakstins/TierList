@@ -46,59 +46,66 @@ def tierListExists(username, title):
         return (mList is not None) or ((oList is not None) and (len(oList) > 0))
     
 def getTierLists(username):
-    mList = None
-    oList = None
-    if(connections.oConnected):
-        try:
-            oList = connections.oClient.command("SELECT FROM TIERLIST WHERE in.out[@Class = 'USER'].username = '%s'"
-            % (username))
-        except:
-            connections.oConnected = False
-    if(connections.mConnected and not connections.oConnected):
-        try:
-            mList = connections.tierlistDB.find({"username": username})
-        except:
-            connections.mConnected = False
+    mTierLists = None
+    oTierLists = None
+    # if(connections.oConnected):
+    #     try:
+    #         oTierLists = connections.oClient.command("SELECT FROM TIERLIST WHERE in.out[@Class = 'USER'].username = '%s'"
+    #         % (username))
+    #     except:
+    #         connections.oConnected = False
+    #if(connections.mConnected and not connections.oConnected):
+    try:
+        mUserLists = connections.userDB.find({"username": username})
+        tids = mUserLists[0]['tierlist-ids']
+        mTierLists = []
+        for curId in tids:
+            print(curId)
+            tl = connections.tierlistDB.find({"_id": curId})[0]
+            mTierLists.append(tl)
+    except:
+        connections.mConnected = False
     
     if (not (connections.mConnected or connections.oConnected)):
         #returns None if dbs are no longer connected
         print("NO CONNECTION FOR TIERLIST EXISTS")
         return None
     else:
-        print(connections.mConnected)
-        print(connections.oConnected)
-        if(oList):
-            return oList
-        elif(mList):
-            return mList
+        if(oTierLists):
+            return oTierLists
+        elif(mTierLists):
+            return mTierLists
         else:
             return []
 
 def getTierListByTitle(username,title):
-    mList = None
-    oList = None
-    if(connections.oConnected):
-        try:
-            oList = connections.oClient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username = '%s'"
-            % (username))
-        except:
-            connections.oConnected = False
-    if(connections.mConnected and not connections.oConnected):
-        try:
-            mList = connections.tierlistDB.find({"username": username, "title": title})
-        except:
-            connections.mConnected = False
+    mTierList = None
+    oTierList = None
+    # if(connections.oConnected):
+    #     try:
+    #         oTierList = connections.oClient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username = '%s'"
+    #         % (username))
+    #     except:
+    #         connections.oConnected = False
+    #if(connections.mConnected and not connections.oConnected):
+    try:
+        mUserList = connections.userDB.find({"username": username})
+        tids = mUserList[0]['tierlist-ids']
+        mTierList = []
+        for curId in tids:
+            tl = connections.tierlistDB.find({"_id": curId})[0]
+            mTierList = tl
+    except:
+        connections.mConnected = False
     if (not (connections.mConnected or connections.oConnected)):
         #returns None if dbs are no longer connected
         print("NO CONNECTION FOR TIERLIST EXISTS")
         return None
     else:
-        print(connections.mConnected)
-        print(connections.oConnected)
-        if(oList):
-            return oList
-        elif(mList):
-            return mList
+        if(oTierList):
+            return oTierList
+        elif(mTierList):
+            return mTierList
         else:
             return []
 

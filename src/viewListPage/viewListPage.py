@@ -23,8 +23,6 @@ def relative_to_assets(path: str) -> Path:
 
 def viewListPage(window, title):
     tierList = getTierListByTitle(getUsername(),title)
-    tierList = tierList[0]
-
     canvas = Canvas(
         window,
         bg = "#FFFFFF",
