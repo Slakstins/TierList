@@ -1,4 +1,5 @@
 import connections
+import time
 
 
 def userExists(username):
@@ -56,12 +57,20 @@ def getTierLists(username):
     #         connections.oConnected = False
     #if(connections.mConnected and not connections.oConnected):
     try:
-        mUserLists = connections.userDB.find({"username": username})
-        tids = mUserLists[0]['tierlist-ids']
+        mUser = connections.userDB.find_one({"username": username})
+        if (mUser is None):
+            print("user not found")
+            return
+        if ('tierlist-ids' not in mUser):
+            print("user has not yet made any tierlists")
+            return []
+        tids = mUser['tierlist-ids']
         mTierLists = []
         for curId in tids:
-            tl = connections.tierlistDB.find({"_id": curId})[0]
-            mTierLists.append(tl)
+            t = connections.tierlistDB.find_one({"_id": curId})
+            if (t is None):
+                continue
+            mTierLists.append(t)
     except:
         connections.mConnected = False
     

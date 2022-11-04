@@ -91,6 +91,7 @@ def browsePage(window):
     curYVal = 61
 
     for tierList in getTierLists(getUsername()):
+        print(tierList)
         title = tierList["title"]
         getButton(title).place(
             x=184.0,
