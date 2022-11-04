@@ -12,12 +12,12 @@ def registerUser(window, username, password):
     global currentUser, userDB, oClient, oConnected, mConnected
     connected = connections.tryConnections()
     if (not connected):
-        print("cannot register user if dbs are down")
+        print("DBs down. Instruction pushed to queue")
+        from loginPage.loginPage import loginPage
+        loginPage(window, username, password)
         return
     res = front_end_r.userExists(username)
-    if (res is None):
-        print("Connection down. pushing instruction to queue regardless")
-    elif (res is True):
+    if (res):
         print("username already in use")
         return
     else:

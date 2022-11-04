@@ -9,14 +9,14 @@ def userExists(username):
         try:
             mUser = connections.userDB.find_one({"username": username})
         except:
-            mConnected = False
-    if (mConnected):
+            connections.mConnected = False
+    if (connections.mConnected):
         try:
             oUserLi = connections.oClient.command("SELECT FROM USER WHERE username='%s'" % (username))
         except:
-            oConnected = False
+            connections.oConnected = False
     #only needs to exist on one DB to be considered existing
-    if (not (mConnected or oConnected)):
+    if (not (connections.mConnected or connections.oConnected)):
         #returns None if dbs are no longer connected
         print("NO CONNECTION FOR USR EXISTS")
         return None
