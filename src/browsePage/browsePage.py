@@ -49,28 +49,28 @@ def browsePage(window):
         outline="")
 
     #shared lists
-    canvas.create_rectangle(
-        313.0,
-        56.0,
-        568.0,
-        299.0,
-        fill="#999393",
-        outline="")
+    # canvas.create_rectangle(
+    #     313.0,
+    #     56.0,
+    #     568.0,
+    #     299.0,
+    #     fill="#999393",
+    #     outline="")
 
-    canvas.create_text(
-        318.0,
-        41.0,
-        anchor="nw",
-        text="Shared Lists:",
-        fill="#000000",
-        font=("Inter", 12 * -1)
-    )
+    # canvas.create_text(
+    #     318.0,
+    #     41.0,
+    #     anchor="nw",
+    #     text="Shared Lists:",
+    #     fill="#000000",
+    #     font=("Inter", 12 * -1)
+    # )
 
     #my lists
     canvas.create_rectangle(
         26.0,
         56.0,
-        281.0,
+        568.0,
         299.0,
         fill="#999393",
         outline="")
@@ -91,10 +91,9 @@ def browsePage(window):
     curYVal = 61
 
     for tierList in getTierLists(getUsername()):
-        
         title = tierList["title"]
         getButton(title).place(
-            x=31.0,
+            x=184.0,
             y=curYVal,
             width=243.0,
             height=25.0

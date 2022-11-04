@@ -7,10 +7,11 @@ from pathlib import Path
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+from tkinter import INSERT, Tk, Canvas, Entry, Text, Button, PhotoImage
 from front_end_cud import getUsername
 
 from front_end_r import getTierListByTitle
+from util import arrayToPrettyString
 
 
 OUTPUT_PATH = Path(__file__).parent
@@ -22,7 +23,6 @@ def relative_to_assets(path: str) -> Path:
 
 def updateListPage(window, title):
     tierList = getTierListByTitle(getUsername(),title)
-    tierList = tierList[0]
     
     canvas = Canvas(
         window,
@@ -80,6 +80,8 @@ def updateListPage(window, title):
         bg="#D9D9D9",
         highlightthickness=0
     )
+    entry_1.insert(INSERT, tierList["title"])
+    
     entry_1.place(
         x=392.0,
         y=280.0,
@@ -128,6 +130,7 @@ def updateListPage(window, title):
         bg="#D9D9D9",
         highlightthickness=0
     )
+    entry_2.insert(INSERT, arrayToPrettyString(tierList["tiers"][0]["label1"][0]["values"]))
     entry_2.place(
         x=394.0,
         y=70.0,
@@ -156,6 +159,8 @@ def updateListPage(window, title):
         bg="#FF7E7E",
         highlightthickness=0
     )
+    entry_3.insert(INSERT, tierList["tiers"][0]["label1"][0]["name"])
+    
     entry_3.place(
         x=37.0,
         y=64.0,
@@ -184,6 +189,7 @@ def updateListPage(window, title):
         bg="#D9D9D9",
         highlightthickness=0
     )
+    entry_4.insert(INSERT, arrayToPrettyString(tierList["tiers"][0]["label2"][0]["values"]))
     entry_4.place(
         x=394.0,
         y=140.0,
@@ -212,6 +218,7 @@ def updateListPage(window, title):
         bg="#FF7E7E",
         highlightthickness=0
     )
+    entry_5.insert(INSERT, tierList["tiers"][0]["label2"][0]["name"])
     entry_5.place(
         x=37.0,
         y=134.0,
@@ -240,6 +247,7 @@ def updateListPage(window, title):
         bg="#D9D9D9",
         highlightthickness=0
     )
+    entry_6.insert(INSERT, arrayToPrettyString(tierList["tiers"][0]["label3"][0]["values"]))
     entry_6.place(
         x=394.0,
         y=210.0,
@@ -268,6 +276,7 @@ def updateListPage(window, title):
         bg="#FF7E7E",
         highlightthickness=0
     )
+    entry_7.insert(INSERT, tierList["tiers"][0]["label3"][0]["name"])
     entry_7.place(
         x=37.0,
         y=204.0,
@@ -287,7 +296,7 @@ def updateListPage(window, title):
         136.0,
         2.0,
         anchor="nw",
-        text="Create List",
+        text="Update List: " + title,
         fill="#000000",
         font=("Inter", 24 * -1)
     )
@@ -295,12 +304,12 @@ def updateListPage(window, title):
     button_image_2 = PhotoImage(
         file=relative_to_assets("button_2.png"))
 
-    from browsePage.browsePage import browsePage
+    from viewListPage.viewListPage import viewListPage
     button_2 = Button(
         image=button_image_2,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: browsePage(window),
+        command=lambda: viewListPage(window, title),
         relief="flat"
     )
     button_2.place(

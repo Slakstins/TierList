@@ -60,7 +60,6 @@ def getTierLists(username):
         tids = mUserLists[0]['tierlist-ids']
         mTierLists = []
         for curId in tids:
-            print(curId)
             tl = connections.tierlistDB.find({"_id": curId})[0]
             mTierLists.append(tl)
     except:

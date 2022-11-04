@@ -120,16 +120,19 @@ def createTierList(window, title, t1, l1, t2, l2, t3, l3):
         else:
             print("Failed to create tier list")
 
-def updateTierList(window, oldTitle, newTitle, l1, t1, l2, t2, l3, t3):
-    print("oldtitle: " + oldTitle)
-    print("newtitle: " + newTitle)
-    print("l1: " + l1)
-    print("t1: " + t1)
-    print("l2: " + l2)
-    print("t2: " + t2)
-    print("l3: " + l3)
-    print("t3: " + t3)
-    print("TODO")
+def updateTierList(window, oldTitle, newTitle, t1, l1, t2, l2, t3, l3):
+    global currentUser
+    connected = connections.tryConnections()
+    if (not connected):
+        print("db not connected")
+        return
+
+    else:
+        if(redis_queue_commands.updateTierList(currentUser, oldTitle, newTitle, l1, t1, l2, t2, l3, t3)):
+            from viewListPage.viewListPage import viewListPage
+            viewListPage(window, newTitle)
+        else:
+            print("Failed to update tier list")
 
 def deleteTierList(window, title):
     global currentUser
