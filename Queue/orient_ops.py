@@ -49,6 +49,9 @@ def orientCreateTierList(inst):
     res = instructions.oclient.command("CREATE VERTEX TIERLIST CONTENT {title: '%s'}" % (inst["title"]))
     print(res[0]._rid)
     instructions.oclient.command("CREATE EDGE FROM (SELECT FROM USER WHERE username='%s') TO (SELECT FROM TIERLIST WHERE @rid = '%s')" % (inst["username"], res[0]._rid))
+
+    instructions.oclient.command("UPDATE TIERLIST SET title='%s', tiers=%s WHERE @RID IN (SELECT FROM (TRAVERSE * FROM (SELECT FROM USER WHERE username='%s')) WHERE @class = 'TIERLIST' AND title='%s')"
+            % (inst["newTitle"], inst["tiers"], inst["username"], inst["oldTitle"]))
     print("orient created tier list")
 
 def orientUpdateTierList(inst):
