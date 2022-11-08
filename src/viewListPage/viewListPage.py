@@ -4,16 +4,22 @@
 
 
 from pathlib import Path
+import glob
+import os
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Label, Tk, Canvas, Entry, Text, Button, PhotoImage, INSERT
+
+from numpy import imag
 
 from browsePage.browsePage import browsePage
 from front_end_cud import getUsername
 from front_end_r import getTierListByTitle
 from redis_queue_commands import deleteTierList
 from util import arrayToPrettyString
+from PIL import ImageTk, Image
+import bing_image_download
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets")
@@ -86,6 +92,7 @@ def viewListPage(window, title):
         fill="#262626",
         outline="")
 
+#put images here:
     canvas.create_rectangle(
         86.0,
         55.0,
@@ -123,6 +130,7 @@ def viewListPage(window, title):
         fill="#262626",
         outline="")
 
+#put images here:
     canvas.create_rectangle(
         86.0,
         125.0,
@@ -166,7 +174,6 @@ def viewListPage(window, title):
         249.0,
         fill="#D9D9D9",
         outline="")
-
     entry_image_3 = PhotoImage(
         file=relative_to_assets("entry_3.png"))
     entry_bg_3 = canvas.create_image(
@@ -238,6 +245,7 @@ def viewListPage(window, title):
         fill="#5D5FEF",
         outline="")
 
+    #
     canvas.create_text(
         136.0,
         2.0,
@@ -249,33 +257,6 @@ def viewListPage(window, title):
 
     button_image_4 = PhotoImage(
         file=relative_to_assets("button_4.png"))
-
-    canvas.create_text(
-        100.0,
-        64.0,
-        anchor="nw",
-        text=arrayToPrettyString(tierList["tiers"][0]["label1"][0]["values"]),
-        fill="#000000",
-        font=("Inter", 24 * -1)
-    )
-
-    canvas.create_text(
-        100.0,
-        134.0,
-        anchor="nw",
-        text=arrayToPrettyString(tierList["tiers"][0]["label2"][0]["values"]),
-        fill="#000000",
-        font=("Inter", 24 * -1)
-    )
-
-    canvas.create_text(
-        100.0,
-        204.0,
-        anchor="nw",
-        text=arrayToPrettyString(tierList["tiers"][0]["label3"][0]["values"]),
-        fill="#000000",
-        font=("Inter", 24 * -1)
-    )
 
     from browsePage.browsePage import browsePage
     button_4 = Button(
@@ -291,5 +272,68 @@ def viewListPage(window, title):
         width=59.0,
         height=20.0
     )
+
+#put images here:
+    images1 = []
+    images2 = []
+    images3 = []
+    i = 0
+    xOffset = 0
+    for query in tierList["tiers"][0]["label1"][0]["values"]:
+        if (query == ""):
+            continue
+        path = "viewListPage/assets/bingImages/" + query.strip() + "/Image_1.*"
+        imgPaths = glob.glob(path)
+
+        #only download it if the result is not already downloaded
+        if (len(imgPaths) == 0):
+            bing_image_download.downloadImage(query)
+            imgPaths = glob.glob(path)
+        img = Image.open(imgPaths[0])
+        img.thumbnail((80, 45))
+        images1.append(ImageTk.PhotoImage(img))
+        xOffset -= (80 - img.width) / 2
+        entry_image_1 = canvas.create_image(130 + xOffset, 82, image=images1[i])
+        xOffset += 40 + img.width / 2 + 10
+        i += 1
+    i = 0
+    xOffset = 0
+    for query in tierList["tiers"][0]["label2"][0]["values"]:
+        if (query == ""):
+            continue
+        path = "viewListPage/assets/bingImages/" + query.strip() + "/Image_1.*"
+        imgPaths = glob.glob(path)
+        if (len(imgPaths) == 0):
+            bing_image_download.downloadImage(query)
+            imgPaths = glob.glob(path)
+        img = Image.open(imgPaths[0])
+        img.thumbnail((80, 45))
+        images2.append(ImageTk.PhotoImage(img))
+        xOffset -= (80 - img.width) / 2
+        entry_image_1 = canvas.create_image(130 + xOffset, 82 + 70, image=images2[i])
+        xOffset += 40 + img.width / 2 + 10
+        i += 1
+    i = 0
+    xOffset = 0
+    for query in tierList["tiers"][0]["label3"][0]["values"]:
+        if (query == ""):
+            continue
+        path = "viewListPage/assets/bingImages/" + query.strip() + "/Image_1.*"
+        imgPaths = glob.glob(path)
+        if (len(imgPaths) == 0):
+            bing_image_download.downloadImage(query)
+            imgPaths = glob.glob(path)
+        img = Image.open(imgPaths[0])
+        img.thumbnail((80, 45), Image.ANTIALIAS)
+        images3.append(ImageTk.PhotoImage(img))
+        xOffset -= (80 - img.width) / 2
+        entry_image_1 = canvas.create_image(130 + xOffset, 82 + 140, image=images3[i])
+        xOffset += 40 + img.width / 2 + 10
+        i += 1
+
+
+
+
+
     window.resizable(False, False)
     window.mainloop()
