@@ -30,12 +30,12 @@ def tierListExists(username, title):
     print("checking tier list exists with front end")
     if(connections.oConnected):
         try:
-            mList = connections.tierlistDB.find_one({"username": username, "title": title})
+            oList = connections.tierlistDB.find_one({"username": username, "title": title})
         except:
             connections.mConnected = False
     if(connections.mConnected):
         try:
-            oList = connections.oClient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username = '%s'"
+            mList = connections.oClient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username = '%s'"
             % (title, username))
         except:
             connections.oConnected = False
@@ -55,12 +55,12 @@ def getTierLists(username):
             # % (username))
             # oUser = connections.oClient.command("SELECT FROM USER WHERE username = '%s'" % (username))
             # print(oUser[0].out_)
-            print
             oTierLists = connections.oClient.command("SELECT FROM (TRAVERSE * FROM (SELECT FROM USER WHERE username = '%s')) WHERE @class = 'TIERLIST'" % (username))
-            tids = oTierLists[0]
+            print(oTierLists)
+            tids = oTierLists
             oTierLists = []
             for curId in tids:
-                print(tids)
+                print(curId)
         except:
             connections.oConnected = False
     if(connections.mConnected and not connections.oConnected):

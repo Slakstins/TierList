@@ -46,12 +46,12 @@ def orientCreateTierList(inst):
     s = instructions.oclient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username='%s'"
             % (inst["title"], inst["username"]))
 
-    res = instructions.oclient.command("CREATE VERTEX TIERLIST CONTENT {title: '%s'}" % (inst["title"]))
+    res = instructions.oclient.command("CREATE VERTEX TIERLIST CONTENT {title: '%s', tiers: '%s'}" % (inst["title"], inst["tiers"]))
     print(res[0]._rid)
     instructions.oclient.command("CREATE EDGE FROM (SELECT FROM USER WHERE username='%s') TO (SELECT FROM TIERLIST WHERE @rid = '%s')" % (inst["username"], res[0]._rid))
 
-    instructions.oclient.command("UPDATE TIERLIST SET title='%s', tiers=%s WHERE @RID IN (SELECT FROM (TRAVERSE * FROM (SELECT FROM USER WHERE username='%s')) AND @class = 'TIERLIST' AND title='%s')"
-            % (inst["newTitle"], inst["tiers"], inst["username"], inst["oldTitle"]))
+    # instructions.oclient.command("UPDATE TIERLIST SET title='%s', tiers=%s WHERE @RID IN (SELECT FROM (TRAVERSE * FROM (SELECT FROM USER WHERE username='%s')) AND @class = 'TIERLIST' AND title='%s')"
+    #         % (inst["newTitle"], inst["tiers"], inst["username"], inst["oldTitle"]))
     
     print("orient created tier list")
 
