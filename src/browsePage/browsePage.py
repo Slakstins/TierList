@@ -90,10 +90,9 @@ def browsePage(window):
     from viewListPage.viewListPage import viewListPage
     curYVal = 61
 
-    for tierList in getTierLists(getUsername()):
-        print(tierList)
-        title = tierList["title"]
-        getButton(title).place(
+    for tierListTitle in getTierLists(getUsername()):
+        print(tierListTitle)
+        getButton(tierListTitle).place(
             x=184.0,
             y=curYVal,
             width=243.0,
