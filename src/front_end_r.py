@@ -56,13 +56,15 @@ def getTierLists(username):
             # oUser = connections.oClient.command("SELECT FROM USER WHERE username = '%s'" % (username))
             # print(oUser[0].out_)
             oTierLists = connections.oClient.command("SELECT FROM (TRAVERSE * FROM (SELECT FROM USER WHERE username = '%s')) WHERE @class = 'TIERLIST'" % (username))
-            print(oTierLists)
             tids = oTierLists
             oTierLists = []
             for curId in tids:
-                print(curId)
+                if (curId is None):
+                    continue
+                oTierLists.append(curId.title)
         except:
             connections.oConnected = False
+
     if(connections.mConnected and not connections.oConnected):
         try:
             mUser = connections.userDB.find_one({"username": username})
@@ -78,7 +80,7 @@ def getTierLists(username):
                 t = connections.tierlistDB.find_one({"_id": curId})
                 if (t is None):
                     continue
-                mTierLists.append(t)
+                mTierLists.append(t["title"])
         except:
             connections.mConnected = False
     
