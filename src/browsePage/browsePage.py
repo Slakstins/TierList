@@ -93,7 +93,7 @@ def browsePage(window):
 
     if(getConnectionStatus()):
         for tierListTitle in getTierLists(getUsername()):
-            print(tierListTitle)
+            #print(tierListTitle)
             getButton(tierListTitle).place(
                 x=184.0,
                 y=curYVal,
