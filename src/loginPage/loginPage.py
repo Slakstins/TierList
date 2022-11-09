@@ -90,8 +90,9 @@ def loginPage(window, username = "", password = ""):
     entry_1 = Text(
         bd=0,
         bg="#9C9C9C",
-        highlightthickness=0,
+        highlightthickness=0
     )
+
     entry_1.place(
         x=178.0,
         y=133.0,
@@ -122,6 +123,7 @@ def loginPage(window, username = "", password = ""):
         highlightthickness=0
         
     )
+
     entry_2.place(
         x=178.0,
         y=68.0,

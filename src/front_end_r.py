@@ -2,6 +2,10 @@ import connections
 import time
 
 
+
+def getConnectionStatus():
+    return (connections.oClient or connections.mConnected)
+    
 def userExists(username):
     mUser = None
     oUserLi = None
@@ -30,15 +34,15 @@ def tierListExists(username, title):
     print("checking tier list exists with front end")
     if(connections.oConnected):
         try:
-            oList = connections.tierlistDB.find_one({"username": username, "title": title})
-        except:
-            connections.mConnected = False
-    if(connections.mConnected):
-        try:
-            mList = connections.oClient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username = '%s'"
+            oList = connections.oClient.command("SELECT FROM (TRAVERSE * FROM (SELECT FROM USER WHERE username = '%s')) WHERE title='%s' AND  @class = 'TIERLIST'"
             % (title, username))
         except:
             connections.oConnected = False
+    if(connections.mConnected):
+        try:
+            mList = connections.tierlistDB.find_one({"username": username, "title": title})
+        except:
+            connections.mConnected = False
     if (not (connections.mConnected or connections.oConnected)):
         #returns None if dbs are no longer connected
         print("NO CONNECTION FOR TIERLIST EXISTS")
@@ -51,10 +55,6 @@ def getTierLists(username):
     oTierLists = None
     if(connections.oConnected):
         try:
-            # oTierLists = connections.oClient.command("SELECT FROM TIERLIST WHERE in_.out_[@Class = 'USER'].username = '%s'"
-            # % (username))
-            # oUser = connections.oClient.command("SELECT FROM USER WHERE username = '%s'" % (username))
-            # print(oUser[0].out_)
             oTierLists = connections.oClient.command("SELECT FROM (TRAVERSE * FROM (SELECT FROM USER WHERE username = '%s')) WHERE @class = 'TIERLIST'" % (username))
             tids = oTierLists
             oTierLists = []

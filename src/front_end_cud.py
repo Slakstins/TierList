@@ -8,6 +8,10 @@ import connections
 #initial establishment of connections at runtime
 connections.tryConnections()
 
+def getUsername():
+    global currentUser
+    return currentUser
+
 def registerUser(window, username, password):
     global currentUser, userDB, oClient, oConnected, mConnected
     connected = connections.tryConnections()
@@ -31,7 +35,6 @@ def registerUser(window, username, password):
             print("failed to create user. try a different username or try again later")
 
 def loginUser(window, username, password):
-    global currentUser
     connected = connections.tryConnections()
     if (not connected):
         print("cannot login user if dbs are down")
@@ -68,6 +71,7 @@ def loginUser(window, username, password):
     else:
         hashedPassword = bcrypt.hashpw(password.encode('utf-8'), salt.encode('utf-8'))
         if(hashedPassword.decode('utf-8') == hash_):
+            global currentUser
             currentUser = username
             from browsePage.browsePage import browsePage
             browsePage(window)
@@ -86,10 +90,6 @@ def updateUser(window, username, password):
     currentUser = username
     from accountPage.accountPage import accountPage
     accountPage(window)
-
-def getUsername():
-    global currentUser
-    return currentUser
 
 def deleteUser(window):
     connected = connections.tryConnections()
@@ -111,7 +111,7 @@ def createTierList(window, title, t1, l1, t2, l2, t3, l3):
     if (res is None):
         print("Connection down. pushing instruction to queue regardless")
     elif (res is True):
-        print("username already in use")
+        print("Tierlist name already in use")
         return
     else:
         if(redis_queue_commands.createTierList(currentUser, title, l1, t1, l2, t2, l3, t3)):
