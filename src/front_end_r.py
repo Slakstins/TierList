@@ -30,12 +30,12 @@ def tierListExists(username, title):
     print("checking tier list exists with front end")
     if(connections.oConnected):
         try:
-            mList = connections.tierlistDB.find_one({"username": username, "title": title})
+            oList = connections.tierlistDB.find_one({"username": username, "title": title})
         except:
             connections.mConnected = False
     if(connections.mConnected):
         try:
-            oList = connections.oClient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username = '%s'"
+            mList = connections.oClient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username = '%s'"
             % (title, username))
         except:
             connections.oConnected = False
@@ -49,30 +49,40 @@ def tierListExists(username, title):
 def getTierLists(username):
     mTierLists = None
     oTierLists = None
-    # if(connections.oConnected):
-    #     try:
-    #         oTierLists = connections.oClient.command("SELECT FROM TIERLIST WHERE in.out[@Class = 'USER'].username = '%s'"
-    #         % (username))
-    #     except:
-    #         connections.oConnected = False
-    #if(connections.mConnected and not connections.oConnected):
-    try:
-        mUser = connections.userDB.find_one({"username": username})
-        if (mUser is None):
-            print("user not found")
-            return
-        if ('tierlist-ids' not in mUser):
-            print("user has not yet made any tierlists")
-            return []
-        tids = mUser['tierlist-ids']
-        mTierLists = []
-        for curId in tids:
-            t = connections.tierlistDB.find_one({"_id": curId})
-            if (t is None):
-                continue
-            mTierLists.append(t)
-    except:
-        connections.mConnected = False
+    if(connections.oConnected):
+        try:
+            # oTierLists = connections.oClient.command("SELECT FROM TIERLIST WHERE in_.out_[@Class = 'USER'].username = '%s'"
+            # % (username))
+            # oUser = connections.oClient.command("SELECT FROM USER WHERE username = '%s'" % (username))
+            # print(oUser[0].out_)
+            oTierLists = connections.oClient.command("SELECT FROM (TRAVERSE * FROM (SELECT FROM USER WHERE username = '%s')) WHERE @class = 'TIERLIST'" % (username))
+            tids = oTierLists
+            oTierLists = []
+            for curId in tids:
+                if (curId is None):
+                    continue
+                oTierLists.append(curId.title)
+        except:
+            connections.oConnected = False
+
+    if(connections.mConnected and not connections.oConnected):
+        try:
+            mUser = connections.userDB.find_one({"username": username})
+            if (mUser is None):
+                print("user not found")
+                return
+            if ('tierlist-ids' not in mUser):
+                print("user has not yet made any tierlists")
+                return []
+            tids = mUser['tierlist-ids']
+            mTierLists = []
+            for curId in tids:
+                t = connections.tierlistDB.find_one({"_id": curId})
+                if (t is None):
+                    continue
+                mTierLists.append(t["title"])
+        except:
+            connections.mConnected = False
     
     if (not (connections.mConnected or connections.oConnected)):
         #returns None if dbs are no longer connected
