@@ -86,13 +86,24 @@ def browsePage(window):
         return button
 
     #generate list buttons
-    from front_end_r import getConnectionStatus
+    from connections import tryConnections
     from front_end_cud import getUsername
     from viewListPage.viewListPage import viewListPage
     curYVal = 61
 
-    if(getConnectionStatus()):
-        for tierListTitle in getTierLists(getUsername()):
+    temp = None
+    tierLists = getTierLists(getUsername())
+    if(tierLists == None):
+        temp = canvas.create_text(
+        184,
+        61,
+        anchor="nw",
+        text="No connection to DB",
+        fill="#000000",
+        font=("Inter", 12 * -1)
+        )
+    else:
+        for tierListTitle in tierLists:
             #print(tierListTitle)
             getButton(tierListTitle).place(
                 x=184.0,
@@ -102,16 +113,7 @@ def browsePage(window):
             )
             #update y val
             curYVal += 30
-    else:
-        canvas.create_text(
-            184,
-            61,
-            anchor="nw",
-            text="No connection to DB",
-            fill="#000000",
-            font=("Inter", 12 * -1)
-        )
-
+            
     canvas.create_text(
         29.0,
         41.0,

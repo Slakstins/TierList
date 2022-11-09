@@ -1,14 +1,10 @@
 import connections
 import time
-
-
-
-def getConnectionStatus():
-    return (connections.oClient or connections.mConnected)
     
 def userExists(username):
     mUser = None
     oUserLi = None
+    connections.tryConnections()
     print("checking user exists with front end")
     if (connections.oConnected):
         try:
@@ -31,6 +27,7 @@ def userExists(username):
 def tierListExists(username, title):
     mList = None
     oList = None
+    connections.tryConnections()
     print("checking tier list exists with front end")
     if(connections.oConnected):
         try:
@@ -53,6 +50,7 @@ def tierListExists(username, title):
 def getTierLists(username):
     mTierLists = None
     oTierLists = None
+    connections.tryConnections()
     if(connections.oConnected):
         try:
             oTierLists = connections.oClient.command("SELECT FROM (TRAVERSE * FROM (SELECT FROM USER WHERE username = '%s')) WHERE @class = 'TIERLIST'" % (username))
@@ -98,6 +96,7 @@ def getTierLists(username):
 def getTierListByTitle(username,title):
     mTierList = None
     oTierList = None
+    connections.tryConnections()
     # if(connections.oConnected):
     #     try:
     #         oTierList = connections.oClient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username = '%s'"
