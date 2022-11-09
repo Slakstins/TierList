@@ -87,6 +87,7 @@ def runInstruction(jsonInst, mongoOrOrient):
 
     if (not success):
         if (mongoOrOrient == constants.ORIENT_KEY):
+            print("QUEUE SETTING ORIENT CONNECT FALSE")
             orientConnected = False
         elif (mongoOrOrient == constants.MONGO_KEY):
             mongoConnected = False
