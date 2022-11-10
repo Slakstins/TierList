@@ -8,12 +8,12 @@ def userExists(username):
     print("checking user exists with front end")
     if (connections.oConnected):
         try:
-            mUser = connections.userDB.find_one({"username": username})
+            oUserLi = connections.oClient.command("SELECT FROM USER WHERE username='%s'" % (username))
         except:
             connections.mConnected = False
     if (connections.mConnected):
         try:
-            oUserLi = connections.oClient.command("SELECT FROM USER WHERE username='%s'" % (username))
+            mUser = connections.userDB.find_one({"username": username})
         except:
             connections.oConnected = False
     #only needs to exist on one DB to be considered existing
@@ -32,7 +32,7 @@ def tierListExists(username, title):
     if(connections.oConnected):
         try:
             oList = connections.oClient.command("SELECT FROM (TRAVERSE * FROM (SELECT FROM USER WHERE username = '%s')) WHERE title='%s' AND  @class = 'TIERLIST'"
-            % (title, username))
+            % (username, title))
         except:
             connections.oConnected = False
     if(connections.mConnected):
@@ -97,22 +97,31 @@ def getTierListByTitle(username,title):
     mTierList = None
     oTierList = None
     connections.tryConnections()
-    # if(connections.oConnected):
-    #     try:
-    #         oTierList = connections.oClient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username = '%s'"
-    #         % (username))
-    #     except:
-    #         connections.oConnected = False
-    #if(connections.mConnected and not connections.oConnected):
-    try:
-        mUserList = connections.userDB.find({"username": username})
-        tids = mUserList[0]['tierlist-ids']
-        mTierList = []
-        for curId in tids:
-            tl = connections.tierlistDB.find({"_id": curId})[0]
+    if(connections.oConnected):
+        connections.oConnected = False
+        # try:
+        #     oTierList = connections.oClient.command("SELECT FROM (TRAVERSE * FROM (SELECT FROM USER WHERE username = '%s')) WHERE title='%s' AND  @class = 'TIERLIST'"
+        #     % (username, title))
+        #     doc = {
+        #         "title" : oTierList[0].title,
+        #         "tiers" : oTierList[0].tiers
+        #     }
+        #     print(doc)
+        #     oTierList = doc
+        # except:
+        #     connections.oConnected = False
+    if(connections.mConnected and not connections.oConnected):
+        try:
+            mUserList = connections.userDB.find({"username": username})
+            print("USER:" + str(mUserList[0]))
+            tids = mUserList[0]['tierlist-ids']
+            print(tids)
+            tl = connections.tierlistDB.find({"_id": tids[0]})
+            print(tl)
+            print(tl[0])
             mTierList = tl
-    except:
-        connections.mConnected = False
+        except:
+            connections.mConnected = False
     if (not (connections.mConnected or connections.oConnected)):
         #returns None if dbs are no longer connected
         print("NO CONNECTION FOR TIERLIST EXISTS")

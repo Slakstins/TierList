@@ -16,7 +16,6 @@ from numpy import imag
 from browsePage.browsePage import browsePage
 from front_end_cud import getUsername
 from front_end_r import getTierListByTitle
-from redis_queue_commands import deleteTierList
 from util import arrayToPrettyString
 from PIL import ImageTk, Image
 import bing_image_download
