@@ -98,28 +98,24 @@ def getTierListByTitle(username,title):
     oTierList = None
     connections.tryConnections()
     if(connections.oConnected):
-        connections.oConnected = False
-        # try:
-        #     oTierList = connections.oClient.command("SELECT FROM (TRAVERSE * FROM (SELECT FROM USER WHERE username = '%s')) WHERE title='%s' AND  @class = 'TIERLIST'"
-        #     % (username, title))
-        #     doc = {
-        #         "title" : oTierList[0].title,
-        #         "tiers" : oTierList[0].tiers
-        #     }
-        #     print(doc)
-        #     oTierList = doc
-        # except:
-        #     connections.oConnected = False
+        try:
+            oTierList = connections.oClient.command("SELECT FROM (TRAVERSE * FROM (SELECT FROM USER WHERE username = '%s')) WHERE title='%s' AND  @class = 'TIERLIST'"
+            % (username, title))
+            doc = {
+                "title" : oTierList[0].title,
+                "tiers" : oTierList[0].tiers
+            }
+            print(doc)
+            oTierList = doc
+        except:
+            connections.oConnected = False
     if(connections.mConnected and not connections.oConnected):
         try:
             mUserList = connections.userDB.find({"username": username})
-            print("USER:" + str(mUserList[0]))
             tids = mUserList[0]['tierlist-ids']
-            print(tids)
             tl = connections.tierlistDB.find({"_id": tids[0]})
-            print(tl)
             print(tl[0])
-            mTierList = tl
+            mTierList = tl[0]
         except:
             connections.mConnected = False
     if (not (connections.mConnected or connections.oConnected)):

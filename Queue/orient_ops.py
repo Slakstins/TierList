@@ -54,7 +54,7 @@ def orientCreateTierList(inst):
     print("orient created tier list")
 
 def orientUpdateTierList(inst):
-    instructions.oclient.command("UPDATE TIERLIST SET title='%s', tiers=%s WHERE @RID IN (SELECT FROM (TRAVERSE * FROM (SELECT FROM USER WHERE username='%s')) AND @class = 'TIERLIST' AND title='%s')"
+    instructions.oclient.command("UPDATE TIERLIST SET title='%s', tiers=%s WHERE @RID IN (SELECT FROM (TRAVERSE * FROM (SELECT FROM USER WHERE username='%s'))) AND @class = 'TIERLIST' AND title='%s'"
             % (inst["newTitle"], inst["tiers"], inst["username"], inst["oldTitle"]))
     print("orient updated tier list")
 
