@@ -52,7 +52,7 @@ def createUserPage(window):
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command= lambda: registerUser(window, entry_2.get("1.0","end-1c"), entry_1.get("1.0","end-1c")),
+        command= lambda: registerUser(window, entry_2.get("1.0","end-1c"), entry_1.get()),
         relief="flat"
     )
     button_1.place(
@@ -69,9 +69,10 @@ def createUserPage(window):
         150.0,
         image=entry_image_1
     )
-    entry_1 = Text(
+    entry_1 = Entry(
         bd=0,
         bg="#9C9C9C",
+        show="*",
         highlightthickness=0
     )
     entry_1.place(

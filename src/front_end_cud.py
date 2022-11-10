@@ -110,6 +110,11 @@ def createTierList(window, title, t1, l1, t2, l2, t3, l3):
     res = front_end_r.tierListExists(currentUser, title)
     if (res is None):
         print("Connection down. pushing instruction to queue regardless")
+        if(redis_queue_commands.createTierList(currentUser, title, l1, t1, l2, t2, l3, t3)):
+            from browsePage.browsePage import browsePage
+            browsePage(window)
+        else:
+            print("Failed to create tier list")
     elif (res is True):
         print("Tierlist name already in use")
         return
@@ -129,8 +134,8 @@ def updateTierList(window, oldTitle, newTitle, t1, l1, t2, l2, t3, l3):
 
     else:
         if(redis_queue_commands.updateTierList(currentUser, oldTitle, newTitle, l1, t1, l2, t2, l3, t3)):
-            from viewListPage.viewListPage import viewListPage
-            viewListPage(window, newTitle)
+            from browsePage.browsePage import browsePage
+            browsePage(window)
         else:
             print("Failed to update tier list")
 

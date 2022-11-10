@@ -70,7 +70,7 @@ def loginPage(window, username = "", password = ""):
         image=button_image_2,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: loginUser(window, entry_2.get("1.0","end-1c"), entry_1.get("1.0","end-1c")),
+        command=lambda: loginUser(window, entry_2.get("1.0","end-1c"), entry_1.get()),
         relief="flat"
     )
     button_2.place(
@@ -87,9 +87,10 @@ def loginPage(window, username = "", password = ""):
         150.0,
         image=entry_image_1
     )
-    entry_1 = Text(
+    entry_1 = Entry(
         bd=0,
         bg="#9C9C9C",
+        show="*",
         highlightthickness=0
     )
 
@@ -99,7 +100,7 @@ def loginPage(window, username = "", password = ""):
         width=229.0,
         height=32.0
     )
-    entry_1.insert('1.0', password)
+    entry_1.insert(0, password)
 
     canvas.create_text(
         178.0,
