@@ -145,17 +145,3 @@ def deleteTierList(window, title):
         browsePage(window)
     else:
         print("Failed to create tier list")
-
-
-#probably going to end up replacing this. Our use case will probably require
-#to be able to use the mTierList or oTierListLi for calls after this so it
-#won't be all that helpful.
-# def tierListExists(title, username):
-#     #only needs to exist on one DB to be considered existing
-#     tids = connections.userDB.find_one({"username": username})["tierlist-ids"]
-#     mTierList = connections.tierlistDB.find_one({"title": title, "_id": {"$in": tids}})
-#     oUser = connections.oClient.command("SELECT(SELECT FROM USER WHERE username='%s')" % (username))
-#     oTierListLi = connections.oClient.command("SELECT FROM TIERLIST WHERE title='%s' AND in.out[@Class = 'USER'].username = '%s'"
-#             % (title, username))
-#     return (mTierList is not None) or len(oTierListLi) > 0
-
