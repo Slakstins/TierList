@@ -30,17 +30,14 @@ def mongoCreateTierList(inst):
 
     li = tierlists.insert_one({"title": inst["title"], "tiers": inst["tiers"]})
     #add the id of the new tier list to the list of tierlists created by the user
-    res = users.update_one({"username": inst["username"]}, {"$push": {"tierlist-ids": li.inserted_id}})
-    if (res.modified_count < 1):
-        print("ERROR: failed to find user with username: " + inst["username"])
+    users.update_one({"username": inst["username"]}, {"$push": {"tierlist-ids": li.inserted_id}})
     print("mongo create tier list")
 
 def mongoUpdateTierList(inst):
     tierlists = instructions.mclient['tierList'].tierlists
     users = instructions.mclient['tierList'].users
     tierlist_ids = users.find_one({"username": inst["username"]}).get("tierlist-ids")
-    if (tierlist_ids is None or len(tierlist_ids) < 1):
-        print("no tierlists found for username: " + inst["username"])
+    print(tierlist_ids)
     tierlists.update_one({"title": inst["oldTitle"], "_id": {"$in": tierlist_ids}}, {"$set": {"title": inst["newTitle"], "tiers": inst["tiers"]}})
 
     print("mongo update tier list")
@@ -49,11 +46,7 @@ def mongoDeleteTierList(inst):
     tierlists = instructions.mclient['tierList'].tierlists
     users = instructions.mclient['tierList'].users
     tierlist_ids = users.find_one({"username": inst["username"]}).get("tierlist-ids")
-    res = tierlists.find_one({"title": inst["title"], "_id": {"$in": tierlist_ids}})
-    if (res is None):
-        print("ERROR user does not own tierlist with title")
-        return
-    tid = res.get("_id")
+    tid = tierlists.find_one({"title": inst["title"], "_id": {"$in": tierlist_ids}}).get("_id")
     users.update_one({"username": inst["username"]}, {"$pull": {"tierlist-ids": tid}})
     tierlists.delete_one({"title": inst["title"], "_id": {"$in": tierlist_ids}})
 

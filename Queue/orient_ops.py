@@ -48,7 +48,6 @@ def orientCreateTierList(inst):
         "tiers": inst["tiers"]
         })
     res = instructions.oclient.command("CREATE VERTEX TIERLIST CONTENT " + json.dumps(tierList))
-    print(res[0]._rid)
     instructions.oclient.command("CREATE EDGE FROM (SELECT FROM USER WHERE username='%s') TO (SELECT FROM TIERLIST WHERE @rid = '%s')" % (inst["username"], res[0]._rid))
     
     print("orient created tier list")
